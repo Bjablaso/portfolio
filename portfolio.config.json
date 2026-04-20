@@ -1,0 +1,61 @@
+{
+  "SystemRouterName" : {
+    "project": [
+      "introduction",
+      "cssminiprojects",
+      "reactminiprojects",
+      "htmlminiprojects",
+
+      "composeminiprojects",
+      "composeminiprojectbasic",
+      "composeminiprojectstate",
+      "composeminiprojectlayout",
+      "composeminiprojectadaptivelayout",
+      "composeminiprojectcontraints",
+
+
+      "animationiniprojects",
+      "jascriptminiprojects",
+      "jacvaminiprojects",
+      "kotlinminiprojects",
+      "pythonminiprojects"
+    ]
+  },
+  "ContactLinks": [
+    {"name": "LinkedIn", "link": "https://www.linkedin.com/in/brandon-jablasone-772a19384"},
+    {"name": "GitHub", "link": "https://github.com/Bjablaso"},
+    {"name": "HandShake", "link":  "https://app.joinhandshake.com/profiles/6y2mqm"}
+  ],
+  "GitHubLink": {
+    "project": {
+      "Java" : [
+        { "name": "Tech Startup Battle Simulator", "link" : "https://github.com/Bjablaso/Bjablason_SiliconVSim"},
+        { "name": "Connect 4", "link": "https://github.com/Bjablaso/Connect4"}
+      ],
+      "JavaScript" : [
+        {"name":  "MentAImage", "link":  "https://github.com/mentAImage/canvas-app"}
+      ],
+      "Python": [],
+      "Kotlin": [],
+      "Compose": [],
+      "C": [],
+      "React": [],
+      "ReactNative": [],
+      "Vue": []
+
+    }
+
+  },
+  "ProjectResourceLink": {
+    "JetPackCompose": {
+      "Basic": [
+        {"name": "TouchAndInput", "link":  "https://developer.android.com/develop/ui/compose/touch-input"},
+        {"name": "State", "link": "https://developer.android.com/develop/ui/compose/state"},
+        {"name":  "acttivitylivecycle", "link":  "https://developer.android.com/develop/ui/compose/lifecycle"}
+
+      ]
+
+    }
+
+  }
+}
