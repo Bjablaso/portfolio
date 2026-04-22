@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 public/workstation.glb
 public/workstation.glb
+
+# amplify
+.amplify
+amplify_outputs*
+amplifyconfiguration*

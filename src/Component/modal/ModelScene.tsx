@@ -17,8 +17,6 @@ import { CameraPositionTracker } from "../../Tracker/CameraPositionTracker.tsx";
 import { ManualControl } from "../../Hooks/useManualControl.tsx";
 import {useCameraStore} from "../../Store/cameraStore.tsx";
 import {useHtmlSharpener} from "../../Hooks/useHtmlSharpener.tsx";
-import {CameraResizeHandler} from "../../Hooks/CameraResizeHandler.tsx";
-import {CameraFovClamper} from "../../Hooks/CameraFovClamper.tsx";
 
 export const ModelScene: React.FC= () => {
     const orbitRef = useRef<OrbitControlsImpl>(null);

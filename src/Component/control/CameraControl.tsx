@@ -1,6 +1,6 @@
 import {CameraControls} from "@react-three/drei";
 import {useFrame, useThree} from "@react-three/fiber";
-import {useEffect, useRef, useState} from "react";
+import {useEffect} from "react";
 import {useKeyBoard} from "../../Hooks/useKeyBoard.tsx";
 import * as React from "react";
 
@@ -10,7 +10,7 @@ type CamaraControlProps ={
 }
 
 
-export const ManualControls:React.FC<CamaraControlProps> = ({isActive}) => {
+export const ManualControls:React.FC<CamaraControlProps> = () => {
     const {camera} = useThree()
     
     useEffect(() => {
@@ -37,8 +37,8 @@ export const ManualControls:React.FC<CamaraControlProps> = ({isActive}) => {
 
 export const AutoControls:React.FC<CamaraControlProps> = ({isActive}) => {
     const currentKey = useKeyBoard() // hook are function that like alongside component and can take in or return a value
-    const {camera} = useThree()
-    const fixedZ = camera.position.z
+    //const {camera} = useThree()
+   // const fixedZ = camera.position.z
     useFrame((state, delta)=>{ // cause unecessary re-render
         const motionSpeedX = 50 * delta;
 
