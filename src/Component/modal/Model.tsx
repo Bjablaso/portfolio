@@ -11,33 +11,7 @@ interface ModelProps {
     onMonitorClick?: (monitor: THREE.Object3D, focus: boolean) => void;
 }
 
-// ✅ Memoized screen — never re-renders unless props change
-// const MonitorScreen = memo(({ rotation, position }: {
-//     rotation: THREE.Euler,
-//     position: [number, number, number]
-// }) => {
-//     return (
-//         <Html
-//             className="screen_x"
-//             transform
-//             position={position}
-//             rotation={rotation}
-//             distanceFactor={5} //7
-//             prepend
-//             occlude={false}
-//             //zIndexRange={[0, 0]}
-//             //calculatePosition={() => [0, 0]}
-//         >
-//             <div className="wrapper"
-//                  style={{ width: '488px', height: '286px', overflow: 'hidden' }}
-//                  onPointerDown={(e) => e.stopPropagation()}>
-//                 <div className="inner">
-//                     <DeskTop/>
-//                 </div>
-//             </div>
-//         </Html>
-//     );
-// });
+
 const MonitorScreen = memo(({ rotation, position }: {
     rotation: THREE.Euler,
     position: [number, number, number]
@@ -67,7 +41,8 @@ const MonitorScreen = memo(({ rotation, position }: {
 
 export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
 
-    const {nodes} = useGLTF('/workstation.glb')
+
+    const {nodes} = useGLTF("https://bjablasowebportfoliobucket.s3.us-west-1.amazonaws.com/3DModals/workstation.glb")
     const refModel = useRef<THREE.Group | null>(null)
     const monitorRef = useRef<Object3D>(null);
     const monitorrRef = useRef<Object3D>(null);
@@ -76,6 +51,7 @@ export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
     // ✅ Freeze rotation and position so they never create new references
     const screenRotation = useMemo(() => nodes['screen'].rotation, []);
     const screenPosition: [number, number, number] = useMemo(() => [-0.10, -0.30, -2.5], []);
+
 
     useEffect(() => {
         if (!monitorrRef.current) return;
@@ -145,7 +121,11 @@ export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
     );
 };
 
-useGLTF.preload("/workstation.glb");
+// useGLTF.preload("/workstation.glb");
+useGLTF.preload(
+    "https://bjablasowebportfoliobucket.s3.us-west-1.amazonaws.com/3DModals/workstation.glb"
+);
+
 
 // import {Bounds, Html, useGLTF} from "@react-three/drei";
 // import {useEffect, useRef} from "react";
