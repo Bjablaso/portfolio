@@ -2,7 +2,6 @@ import {
     IoBatteryFull,
     IoSearch,
 } from "react-icons/io5";
-//import {MdComputer} from "react-icons/md";
 import {FaWifi, FaApple} from "react-icons/fa";
 
 
@@ -40,7 +39,7 @@ interface ManuBarIcon{
     itemName: string;
     type: "icon" | "text";
     isActive: boolean;
-    icon?: IconType | React.ComponentType<never>;
+    icon?: IconType | React.ComponentType<any>;
     isSubManu: boolean;
     subManu?: SubItem[]
     application?: ManuItemInter[]
@@ -149,9 +148,9 @@ const manuItem: ManuBarIcon[] = [
                 ]
             }
         ],
-        someitem: function FindApplicationMenuItem(runningApplication: { subManu: never }) {
-            return runningApplication.subManu;
-        }
+        // someitem: function FindApplicationMenuItem(runningApplication: { subManu: never }) {
+        //     return runningApplication.subManu;
+        // }
     },
     {
         itemName: "Battery",
@@ -183,10 +182,10 @@ export const ManuBar = () => {
     const [currentTime, setCurrentTime] = useState<string>('')
     const [currentDate, setCurrentDate] = useState<string>('')
     const icon = manuItem.filter((e)=> e.itemName !== "AppleIcon")
-    const AppleIcon = manuItem[0].icon
-    const [userclickManuButton, setActiveManuButtonClick] = useState<boolean>(false)
-    const systemApplication = manuItem[0].application
-    const [isApplicationRunning, setRunningApplication] = useState<ManuItemInter>(manuItem[0].application![0])
+    //const AppleIcon = manuItem[0].icon
+   // const [userclickManuButton, setActiveManuButtonClick] = useState<boolean>(false)
+    //const systemApplication = manuItem[0].application
+    const [isApplicationRunning] = useState<ManuItemInter>(manuItem[0].application![0])
 
     function newTime(date: Date): string {
 
@@ -245,7 +244,18 @@ export const ManuBar = () => {
         <div className="w-full h-full flex justify-between text-[0.4rem] ">
             <div className="flex gap-1 justify-start items-center">
                 <div className="flex items-center">
-                    <AppleIcon className="text-white h-2 w-2"/>
+                    {/*{icon.map((item, index)=>{*/}
+                    {/*    return(*/}
+                    {/*        <div key={`${item.itemName}${index}`}  >*/}
+                    {/*            {item.type === "icon" && item.icon && (() => {*/}
+                    {/*                const AppleIcon = item.icon;*/}
+                    {/*                return <AppleIcon className="text-white h-2 w-2" />;*/}
+                    {/*            })()}*/}
+                    {/*        </div>*/}
+                    {/*    )*/}
+                    {/*})}*/}
+                    {manuItem[0].icon && React.createElement(manuItem[0].icon as React.ElementType, { className: "text-white h-2 w-2" })}
+
                 </div>
                 <div className="flex flex-row gap-1 items-center ">
                     <div className="text-center font-bold ">

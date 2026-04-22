@@ -4,7 +4,6 @@ interface GlassContainerProps {
   children: ReactNode;
   className?: string;
   variant?: 'default' | 'light' | 'dark' | 'colorful';
-  hover?: boolean;
   padding?: 'none' | 'sm' | 'md' | 'lg';
   blur?: 'sm' | 'md' | 'lg' | 'xl';
   tint?: string;
@@ -18,7 +17,6 @@ export function GlassContainer_two({
                                      children,
                                      className = '',
                                      variant = 'default',
-                                     hover = true,
                                      padding = 'md',
                                      blur = 'lg',
                                      tint,
