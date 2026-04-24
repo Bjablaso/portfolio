@@ -12,9 +12,10 @@ interface ModelProps {
 }
 
 
-const MonitorScreen = memo(({ rotation, position }: {
+const MonitorScreen = memo(({ rotation, position, modelMonitorRef }: {
     rotation: THREE.Euler,
     position: [number, number, number]
+    modelMonitorRef: React.RefObject<THREE.Object3D>
 }) => {
     return (
         <Html
@@ -23,6 +24,7 @@ const MonitorScreen = memo(({ rotation, position }: {
             rotation={rotation}
             distanceFactor={5}
             zIndexRange={[100, 0]}
+            occlude={[modelMonitorRef]}
         >
             <div
                 onPointerDown={(e) => e.stopPropagation()}
@@ -88,9 +90,11 @@ export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
 
                             <primitive object={nodes.screen}>
                                 {/* ✅ Memoized — won't re-render on parent updates */}
+
                                 <MonitorScreen
                                     rotation={screenRotation}
                                     position={screenPosition}
+                                    modelMonitorRef={monitorRef}
                                 />
                             </primitive>
                         </group>
