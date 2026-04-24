@@ -35,6 +35,9 @@
     pointer-events: none;
     overscroll-behavior-y: none;
     backface-visibility: hidden;
+    background: url("src/assest/images/mountainview.jpg");
+    background-size: cover;
+    image-rendering: -webkit-optimize-contrast;
 }
 
 .wrapper {
