@@ -244,16 +244,6 @@ export const ManuBar = () => {
         <div className="w-full h-full flex justify-between text-[0.4rem] ">
             <div className="flex gap-1 justify-start items-center">
                 <div className="flex items-center">
-                    {/*{icon.map((item, index)=>{*/}
-                    {/*    return(*/}
-                    {/*        <div key={`${item.itemName}${index}`}  >*/}
-                    {/*            {item.type === "icon" && item.icon && (() => {*/}
-                    {/*                const AppleIcon = item.icon;*/}
-                    {/*                return <AppleIcon className="text-white h-2 w-2" />;*/}
-                    {/*            })()}*/}
-                    {/*        </div>*/}
-                    {/*    )*/}
-                    {/*})}*/}
                     {manuItem[0].icon && React.createElement(manuItem[0].icon as React.ElementType, { className: "text-white h-2 w-2" })}
 
                 </div>
@@ -265,6 +255,7 @@ export const ManuBar = () => {
                         isApplicationRunning &&
                         <ApplicationSubManu subItem={isApplicationRunning?.subItem ?? []}
                           onItemClick={() => onManuClick}
+
                         />
                     }
 

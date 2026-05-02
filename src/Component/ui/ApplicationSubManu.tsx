@@ -46,7 +46,8 @@ export const ApplicationSubManu: React.FC<ApplicationSubManuProps> = ({ subItem,
                         }}
                         className={`
                             cursor-pointer px-1.5 py-0.5 rounded-[4px] select-none
-                            ${activeIndex === index ? "bg-white/20 text-white" : "text-white hover:bg-white/10"}
+                            ${activeIndex === index ? "bg-white/20 text-white" :
+                            "text-white hover:bg-white/10"}
                         `}
                     >
                         {appManuItem.itemName}
@@ -66,67 +67,4 @@ export const ApplicationSubManu: React.FC<ApplicationSubManuProps> = ({ subItem,
         </div>
     );
 };
-
-// import * as React from "react";
-// import type {SubItem} from "./ManuBar.tsx";
-// import {useState} from "react";
-// import {DropDownManu} from "./DropDownManu.tsx";
-//
-//
-//
-//
-// interface ApplicationSubManuProps {
-//     subItem: SubItem[];
-//     onItemClick?: (item: SubItem) => void;
-// }
-//
-// // add  onItemClick click to  ApplicationSubManu manu later when active turn all manu button off and only current manu button stay
-// export const ApplicationSubManu: React.FC<ApplicationSubManuProps> = ({subItem, onItemClick}) => {
-//     //const [isActive, setActive] = useState<boolean>(false) //set this to true
-//     const [activeIndex, setActiveIndex] = useState<number | null>(null);
-//     return(
-//         <div className="flex flex-row gap-1 text-[0.4rem] text-center  font-light items-center">
-//             {
-//                 subItem.map((appManuItem, index)=>{
-//                     return(
-//                         <>
-//                             <div key={`${appManuItem.itemName}${index}`}
-//                                  onClick={()=> {
-//                                      const result = onItemClick?.(appManuItem);
-//                                      setActiveIndex(index);
-//                                      console.log("Callback returned:", result);
-//                                  }}
-//                                  className="relative inline-block"
-//                             >
-//                                 { activeIndex === index ?
-//                                     <div className={`cursor-pointer px-2 py-1 ${ activeIndex === index ? "bg-gray-300 rounded-[25px]" : "" }  `}>
-//                                         {appManuItem.itemName}
-//                                         {/*{  appManuItem.itemName}  // replace dive with lear glass that*/}
-//                                     </div>
-//
-//                                    :
-//                                     appManuItem.itemName
-//
-//                                 }
-//                                 {/*{appManuItem.itemName} // wrap in class contianer it active when not active show as it */}
-//                             </div>
-//                             { activeIndex === index &&
-//                                 <div className={`flex min-h-5 min w-10 border border-amber-300 absolute top-5`}
-//                                      style={{ left: `${appManuItem.dropManuPosition}px` }}
-//                                 >
-//                                     <DropDownManu dropItems={appManuItem?.dopItemList ?? []} />
-//                                 </div>
-//
-//                             }
-//
-//
-//                             {/*if item is click down display application manu sub manu list */}
-//                         </>
-//
-//                     )
-//                 })
-//             }
-//
-//         </div>
-//     )
-// }
+// Create a store and move all action to that store and trigger custom even -> complecated

@@ -5,7 +5,7 @@ import * as React from "react";
 export const Finder: React.FC = () => {
     return (
         <div className="flex items-center justify-center object-contain
-        rounded-md
+        rounded-md  hover:opacity-40
         ">
 
             <svg

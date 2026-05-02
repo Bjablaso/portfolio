@@ -54,6 +54,7 @@ export const DeskTop = () => {
                     <Finder/>
                     <Edge/>
                     <Divider/>
+                    {/*Put all information in a list here easy to maintain */}
                 </GlassContainer_two>
 
 
