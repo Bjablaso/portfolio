@@ -22,20 +22,24 @@ export const DropDownManu: React.FC<DropDownManuProps> = ({ dropItems, anchorRef
 
     return ReactDOM.createPortal(
         <div
-            style={{
-                position: 'absolute',
-                top: coords.top,
-                left: coords.left,
-                zIndex: 1,
-                minWidth: '140px',
-                background: 'rgba(30, 30, 30, 0.85)',
-                backdropFilter: 'blur(20px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.08) inset',
-                border: '1px solid rgba(255,255,255,0.12)',
-                borderRadius: '6px',
-                padding: '4px 0',
-            }}
+            className="flex flex-col max-w-1/6 z-1000 border border-amber-300 relative"
+            // style={{
+            //     display: 'flex',
+            //     flexDirection: 'column',
+            //   // position: 'absolute',
+            //    // bottom: '10px',
+            // //  top: coords,
+            //    /// left: coords.left,
+            //     zIndex: 1,
+            //     maxWidth: '170px',
+            //     background: 'rgba(30, 30, 30, 0.85)',
+            //     backdropFilter: 'blur(20px) saturate(180%)',
+            //     WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            //     boxShadow: '0 4px 24px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.08) inset',
+            //     border: '1px solid rgba(255,255,255,0.12)',
+            //     borderRadius: '6px',
+            //     padding: '4px 0',
+            // }}
         >
             {dropItems?.map((item, index) => {
                 if (item.description === "---") {
