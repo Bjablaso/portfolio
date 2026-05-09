@@ -9,7 +9,8 @@ interface DropDownManuProps {
 }
 
 export const DropDownManu: React.FC<DropDownManuProps> = ({ dropItems, anchorRef }) => {
-    const [coords, setCoords] = useState({ top: 0, left: 0 });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_coords, setCoords] = useState({ top: 0, left: 0 });
 
     useEffect(() => {
         if (!anchorRef.current) return;

@@ -51,8 +51,10 @@ export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
 
     const {nodes} = useGLTF("https://bjablasowebportfoliobucket.s3.us-west-1.amazonaws.com/3DModals/workstation.glb")
     const refModel = useRef<THREE.Group | null>(null)
-    const monitorRef = useRef<Object3D>(null);
-    const monitorrRef = useRef<Object3D>(null);
+    //const monitorRef = useRef<Object3D>(null);
+    // Also valid — but requires you to handle the undefined case elsewhere
+    const monitorRef = useRef<THREE.Object3D>(new THREE.Object3D());
+   const monitorrRef = useRef<Object3D>(null);
     const { scene } = useThree();
 
     // ✅ Freeze rotation and position so they never create new references
