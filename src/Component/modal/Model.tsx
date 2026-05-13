@@ -11,6 +11,8 @@ interface ModelProps {
     onMonitorClick?: (monitor: THREE.Object3D, focus: boolean) => void;
 }
 
+//prod only
+
 
 const MonitorScreen = memo(({ rotation, position, modelMonitorRef }: {
     rotation: THREE.Euler,
@@ -20,16 +22,13 @@ const MonitorScreen = memo(({ rotation, position, modelMonitorRef }: {
     return (
         <Html
             transform
+            sprite={false}
             position={position}
             rotation={rotation}
             distanceFactor={5}
             zIndexRange={[100, 0]}
-            occlude={[modelMonitorRef]}
-            pointerEvents="none"
-            style={{
-                userSelect: "none",
-                pointerEvents: "none",
-            }}
+             occlude={[modelMonitorRef]}
+            pointerEvents="auto"
         >
             <div
                 onPointerDown={(e) => e.stopPropagation()}
@@ -45,6 +44,7 @@ const MonitorScreen = memo(({ rotation, position, modelMonitorRef }: {
         </Html>
     );
 });
+
 
 export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
 

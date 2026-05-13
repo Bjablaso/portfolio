@@ -76,9 +76,7 @@ const manuItem: ManuBarIcon[] = [
                         dropManuPosition: 0,
                         dopItemList: [
                             { description: "About Preview" },
-                            { description: "---" },  // divider
                             { description: "Settings..." },
-                            { description: "---" },
                             { description: "Hide Preview" },
                             { description: "Hide Others" },
                             { description: "Show All" },
@@ -93,7 +91,6 @@ const manuItem: ManuBarIcon[] = [
                         dopItemList: [
                             { description: "New Window" },
                             { description: "Open..." },
-                            { description: "---" },
                             { description: "Close Window" },
                             { description: "Save" },
                         ]
@@ -107,7 +104,6 @@ const manuItem: ManuBarIcon[] = [
                         dopItemList: [
                             { description: "Undo" },
                             { description: "Redo" },
-                            { description: "---" },
                             { description: "Cut" },
                             { description: "Copy" },
                             { description: "Paste" },
@@ -131,7 +127,6 @@ const manuItem: ManuBarIcon[] = [
                         dopItemList: [
                             { description: "Minimize" },
                             { description: "Zoom" },
-                            { description: "---" },
                             { description: "Bring All to Front" },
                         ]
                     },
