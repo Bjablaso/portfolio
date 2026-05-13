@@ -12,7 +12,6 @@ export const DeskTop = () => {
 
     return (
         <div
-            // className={onEnter ? "desktopPointer" : "pagepointer "}
              style={{
                  display: "grid",
                  width: "100%",
@@ -21,17 +20,11 @@ export const DeskTop = () => {
                  fontSmooth: 'always',
                  WebkitFontSmoothing: 'subpixel-antialiased',
                  textRendering: 'optimizeLegibility',
-                 backgroundImage: 'url("src/assest/images/mountainview.jpg")',  // 👈 add here
+                backgroundImage: 'url("images/mountainview.jpg")',  // 👈 add here
                  backgroundSize: 'cover',
                  backgroundPosition: 'center',
              }}
-            // onMouseEnter={() => {
-            //     setpointEnter(true)
-            // }}
-            // onMouseLeave={() => {
-            //     setpointEnter(false)
-            //
-            // }}
+
         >
             <nav className="flex w-full h-full px-1.25  py-0.5 justify-between text-white font-light">
                 <ManuBar/>
@@ -50,18 +43,15 @@ export const DeskTop = () => {
                     shadow="lg"
                     variant="default"
                     rounded="md"
+                    containerDirection="row"
                 >
                     <Finder/>
                     <Edge/>
                     <Divider/>
-                    {/*Put all information in a list here easy to maintain */}
+
                 </GlassContainer_two>
 
-
             </footer>
-
-
-
         </div>
     );
 };

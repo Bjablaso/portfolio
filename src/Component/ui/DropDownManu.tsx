@@ -1,78 +1,80 @@
-import type { dropManuItems } from "./ManuBar.tsx";
 import * as React from "react";
-import { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+import { createPortal } from "react-dom";
+import type { dropManuItems } from "./ManuBar.tsx";
+import { GlassContainer_two } from "./GlassContainer.tsx";
 
 interface DropDownManuProps {
     dropItems?: dropManuItems[];
-    anchorRef: React.RefObject<HTMLDivElement | null>;  // ← pass the label element
+    anchorRect?: DOMRect | null;
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
 }
 
-export const DropDownManu: React.FC<DropDownManuProps> = ({ dropItems, anchorRef }) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_coords, setCoords] = useState({ top: 0, left: 0 });
+export const DropDownManu: React.FC<DropDownManuProps> = ({
+                                                              dropItems,
+                                                              anchorRect,
+                                                              onMouseEnter,
+                                                              onMouseLeave,
+                                                          }) => {
+    if (!anchorRect || !dropItems?.length) return null;
 
-    useEffect(() => {
-        if (!anchorRef.current) return;
-        const rect = anchorRef.current.getBoundingClientRect();
-        setCoords({
-            top: rect.bottom + window.scrollY,
-            left: rect.left + window.scrollX,
-        });
-    }, [anchorRef]);
-
-    return ReactDOM.createPortal(
+    return createPortal(
         <div
-            className="flex flex-col max-w-1/6 z-1000 border border-amber-300 relative"
-            // style={{
-            //     display: 'flex',
-            //     flexDirection: 'column',
-            //   // position: 'absolute',
-            //    // bottom: '10px',
-            // //  top: coords,
-            //    /// left: coords.left,
-            //     zIndex: 1,
-            //     maxWidth: '170px',
-            //     background: 'rgba(30, 30, 30, 0.85)',
-            //     backdropFilter: 'blur(20px) saturate(180%)',
-            //     WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-            //     boxShadow: '0 4px 24px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.08) inset',
-            //     border: '1px solid rgba(255,255,255,0.12)',
-            //     borderRadius: '6px',
-            //     padding: '4px 0',
-            // }}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            style={{
+                position: "fixed",
+                top: `${anchorRect.bottom + 2}px`,
+                left: `${anchorRect.left}px`,
+                zIndex: 99999,
+                pointerEvents: "auto",
+            }}
         >
-            {dropItems?.map((item, index) => {
-                if (item.description === "---") {
-                    return (
+
+            <GlassContainer_two
+                padding="none"
+                blur="sm"
+                gloss={true}
+                border={true}
+                shadow="sm"
+                variant="default"
+                rounded="lg"
+                containerDirection="column"
+                className="gap-0 items-stretch overflow-hidden min-w-[120px] pt-1 pb-1"
+            >
+                {dropItems.map((item, index) => (
+                    <React.Fragment key={`${item.description}-${index}`}>
                         <div
-                            key={index}
+                            onClick={item.action}
                             style={{
-                                height: '1px',
-                                background: 'rgba(255,255,255,0.12)',
-                                margin: '2px 8px',
+                                padding: "1px 6px",
+                                fontSize: "0.45rem",
+                                whiteSpace: "nowrap",
+                                cursor: "pointer",
+                                userSelect: "none",
                             }}
-                        />
-                    );
-                }
-                return (
-                    <div
-                        key={index}
-                        onClick={item.action}
-                        style={{
-                            padding: '2px 12px',
-                            fontSize: '0.4rem',
-                            color: 'rgba(255,255,255,0.9)',
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap',
-                        }}
-                        onMouseEnter={e => (e.currentTarget.style.background = '#3478f6')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                    >
-                        {item.description}
-                    </div>
-                );
-            })}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = "#3b82f6";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = "transparent";
+                            }}
+                        >
+                            {item.description}
+                        </div>
+
+                        {index !== dropItems.length - 1 && (
+                            <div
+                                style={{
+                                    margin: "0px 0",
+                                    height: "1px",
+                                    background: "rgba(255,255,255,0.2)",
+                                }}
+                            />
+                        )}
+                    </React.Fragment>
+                ))}
+            </GlassContainer_two>
         </div>,
         document.body
     );

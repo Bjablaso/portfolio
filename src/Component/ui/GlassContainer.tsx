@@ -11,6 +11,7 @@ interface GlassContainerProps {
   border?: boolean;
   shadow?: 'none' | 'sm' | 'md' | 'lg';
   rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  containerDirection?: 'row' | 'column'
 }
 
 export function GlassContainer_two({
@@ -24,6 +25,7 @@ export function GlassContainer_two({
                                      border = true,
                                      shadow = 'md',
                                       rounded='lg',
+                                     containerDirection = 'row',
                                    }: GlassContainerProps) {
 
   const paddingStyles = {
@@ -55,6 +57,10 @@ export function GlassContainer_two({
     xl:   'rounded-xl',
     full: 'rounded-full',
   };
+    const directionStyles = {
+        row: 'flex-row',
+        column: 'flex-col',
+    };
 
 // in className:
     // replace hardcoded rounded-2xl
@@ -71,7 +77,8 @@ export function GlassContainer_two({
   return (
       <div
           className={`
-        relative flex flex-row gap-2 rounded-2xl items-center
+        relative flex gap-2 rounded-2xl items-center
+        ${directionStyles[containerDirection]}
        ${border ? 'ring-1 ring-white/20 ring-inset' : ''}
          ${paddingStyles[padding]}
         ${roundedStyles[rounded ?? 'xl']}
@@ -82,6 +89,7 @@ export function GlassContainer_two({
             backdropFilter: blurStyles[blur],
             WebkitBackdropFilter: blurStyles[blur],
             boxShadow: shadowStyles[shadow],
+
           }}
       >
         {/* top gloss streak */}
