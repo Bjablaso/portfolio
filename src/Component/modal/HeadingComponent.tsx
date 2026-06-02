@@ -9,12 +9,12 @@ import {useCameraStore} from "../../Store/cameraStore.tsx";
 
 // type UIMode = 'intro' | 'manual' | 'monitor';
 
-interface PortFolioInfoProps {
+interface LoadingPageProps {
     audioRef: RefObject<HTMLAudioElement | null>;
     // onManualControl : (active: boolean)=> void;
     // cameraMode: UIMode;
 }
-export const PortFolioInfo: React.FC<PortFolioInfoProps> = ({audioRef}) => {
+export const LoadingPage: React.FC<LoadingPageProps> = ({audioRef}) => {
     const [isSpeakerActive, setisSpeakerActive] = useState<boolean>(true)
     const { cameraMode, setCamera } = useCameraStore();
    // const [isManualControl, setManualControl] = useState(false);
@@ -39,8 +39,8 @@ export const PortFolioInfo: React.FC<PortFolioInfoProps> = ({audioRef}) => {
         }
     }
     return (
-        <div className='flex flex-col  absolute top-1/12 left-15 gap-1.5 z-100'>
-            <div className='  intro_font   text-sm bg-white text-black px-3 w-fit'>
+        <div className='flex flex-col  absolute top-1/12 left-15 gap-1.5 z-100 border-l-8 border-amber-200'>
+            <div className='  intro_font   text-sm bg-white text-black px-3 w-fit border-l-8 border-amber-200'>
                 BRANDON JABLASONE
             </div>
             <div className='intro_font text-sm bg-white text-black px-3 w-fit'> Aspiring Software Engineer</div>
