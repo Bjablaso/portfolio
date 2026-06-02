@@ -1,11 +1,11 @@
 import {Bounds, Html, useGLTF} from "@react-three/drei";
-import {useEffect, useRef, useMemo, memo} from "react";
+import { useRef, useMemo, memo} from "react";
 import {DeskTop} from "../ui/DeskTop.tsx";
 import * as React from "react";
 import {Object3D} from "three";
 import * as THREE from "three";
 import {modelClickStore} from "../../Store/useModelClick.tsx";
-import {useThree} from "@react-three/fiber";
+
 
 interface ModelProps {
     onMonitorClick?: (monitor: THREE.Object3D, focus: boolean) => void;
@@ -55,23 +55,23 @@ export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
     // Also valid — but requires you to handle the undefined case elsewhere
     const monitorRef = useRef<THREE.Object3D>(new THREE.Object3D());
    const monitorrRef = useRef<Object3D>(null);
-    const { scene } = useThree();
+   // const { scene } = useThree();
 
     // ✅ Freeze rotation and position so they never create new references
     const screenRotation = useMemo(() => nodes['screen'].rotation, []);
     const screenPosition: [number, number, number] = useMemo(() => [-0.10, -0.30, -2.5], []);
 
 
-    useEffect(() => {
-        if (!monitorrRef.current) return;
-        const helper = new THREE.BoxHelper(monitorrRef.current, 0xff0000);
-        scene.add(helper);
-        return () => {
-            scene.remove(helper);
-            helper.geometry.dispose();
-            (helper.material as THREE.Material).dispose();
-        };
-    }, []);
+    // useEffect(() => {
+    //     if (!monitorrRef.current) return;
+    //     const helper = new THREE.BoxHelper(monitorrRef.current, 0xff0000);
+    //     scene.add(helper);
+    //     return () => {
+    //         scene.remove(helper);
+    //         helper.geometry.dispose();
+    //         (helper.material as THREE.Material).dispose();
+    //     };
+    // }, []);
 
     const handleMonitorGroupClick = React.useCallback((e: any) => {
         e.stopPropagation();
@@ -96,7 +96,7 @@ export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
                             <primitive object={nodes.monitor} ref={monitorRef}/>
 
                             <primitive object={nodes.screen}>
-                                {/* ✅ Memoized — won't re-render on parent updates */}
+
 
                                 <MonitorScreen
                                     rotation={screenRotation}
@@ -122,10 +122,10 @@ export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
                         <primitive object={nodes['whiteboard']} castShadow/>
                     </group>
 
-                    <mesh>
-                        <boxGeometry args={[1, 1, 1]}/>
-                        <meshBasicMaterial color="red" wireframe/>
-                    </mesh>
+                    {/*<mesh>*/}
+                    {/*    <boxGeometry args={[1, 1, 1]}/>*/}
+                    {/*    <meshBasicMaterial color="red" wireframe/>*/}
+                    {/*</mesh>*/}
                 </group>
             </group>
         </Bounds>
