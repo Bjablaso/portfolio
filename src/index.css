@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
+/*@tailwind base;*/
+/*@tailwind components;*/
 @tailwind utilities;
 
 
@@ -33,6 +33,7 @@
   body {
     background: #252525;
     background: linear-gradient(15deg, #101010 0%, #252525 100%);
+
   }
 }
 

@@ -4,7 +4,7 @@ import {HeadingComponent} from "./Component/modal/HeadingComponent.tsx";
 import {usePortFolioAudioPlayer, useStreamer} from "./Hooks/usePortFolioAudioPlayer.tsx";
 import { useState} from "react";
 import {LoadingPage} from "./LoadingPage.tsx";
-import {LoadingScreenBackground} from "./Background/LoadingScreenBackground.tsx";
+//import {LoadingScreenBackground} from "./Background/LoadingScreenBackground.tsx";
 
 function App(){
     const [entered, setEntered] = useState(false);
@@ -14,28 +14,26 @@ function App(){
     function enterPortFolio(value: boolean){
         setEntered(value);
     }
-    if (!entered) {
-        return (
-            <LoadingScreenBackground>
-                <LoadingPage setTransition={enterPortFolio}/>
-            </LoadingScreenBackground>
-
-        );
-    }
-
-
     return (
-      <>
-        <HeadingComponent
-            audioRef={backgroundmusic}
+        <div className="relative w-screen h-screen overflow-hidden">
 
-        />
-          <FindLinks/>
-          <ModelScene/>
-          <audio ref={backgroundmusic} controls  className='hidden'/>
-      </>
+            {/* Portfolio page layer */}
+            <div className="absolute inset-0 z-0">
+                <HeadingComponent audioRef={backgroundmusic} />
+                <FindLinks />
+                <ModelScene />
+                <audio ref={backgroundmusic} controls className="hidden" />
+            </div>
 
-  )
+            {/* Loading overlay layer */}
+            {!entered && (
+                <div className="absolute inset-0 z-50">
+                    <LoadingPage setTransition={enterPortFolio} />
+                </div>
+            )}
+
+        </div>
+    );
 }
 
 export default App
