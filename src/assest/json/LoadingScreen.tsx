@@ -1,7 +1,7 @@
 import {Cube} from '../Icons/Cube.tsx'
-import {Monitor} from "../Icons/Monitor.tsx";
+import {MonitorG} from "../Icons/MonitorG.tsx";
 import {Block} from "../Icons/Block.tsx";
-import {Folder} from "../Icons/Folder.tsx";
+import {FolderG} from "../Icons/FolderG.tsx";
 import {Sparkle} from "../Icons/Sparkle.tsx";
 
 
@@ -24,7 +24,7 @@ export const loadingDataInstruction = {
                 title: "Setting Up Screen",
                 description: "Configuring the display and view settings.",
                 status: "active",
-                icon: <Monitor/>,
+                icon: <MonitorG/>,
             },
             {
                 id: 3,
@@ -38,7 +38,7 @@ export const loadingDataInstruction = {
                 title: "Loading Projects",
                 description: "Fetching project data and resources.",
                 status: "pending",
-                icon: <Folder/>,
+                icon: <FolderG/>,
             },
             {
                 id: 5,
