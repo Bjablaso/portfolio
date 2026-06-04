@@ -5,13 +5,12 @@ import * as React from "react";
 import {Object3D} from "three";
 import * as THREE from "three";
 import {modelClickStore} from "../../Store/useModelClick.tsx";
+import {ModelURL} from "../../api/modelLoader.ts";
 
 
 interface ModelProps {
     onMonitorClick?: (monitor: THREE.Object3D, focus: boolean) => void;
 }
-
-//prod only
 
 
 const MonitorScreen = memo(({ rotation, position, modelMonitorRef }: {
@@ -49,10 +48,8 @@ const MonitorScreen = memo(({ rotation, position, modelMonitorRef }: {
 export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
 
 
-    const {nodes} = useGLTF("https://bjablasowebportfoliobucket.s3.us-west-1.amazonaws.com/3DModals/workstation.glb")
+    const {nodes} = useGLTF(`${ModelURL}/workstation.glb`)
     const refModel = useRef<THREE.Group | null>(null)
-    //const monitorRef = useRef<Object3D>(null);
-    // Also valid — but requires you to handle the undefined case elsewhere
     const monitorRef = useRef<THREE.Object3D>(new THREE.Object3D());
    const monitorrRef = useRef<Object3D>(null);
    // const { scene } = useThree();
@@ -61,17 +58,6 @@ export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
     const screenRotation = useMemo(() => nodes['screen'].rotation, []);
     const screenPosition: [number, number, number] = useMemo(() => [-0.10, -0.30, -2.5], []);
 
-
-    // useEffect(() => {
-    //     if (!monitorrRef.current) return;
-    //     const helper = new THREE.BoxHelper(monitorrRef.current, 0xff0000);
-    //     scene.add(helper);
-    //     return () => {
-    //         scene.remove(helper);
-    //         helper.geometry.dispose();
-    //         (helper.material as THREE.Material).dispose();
-    //     };
-    // }, []);
 
     const handleMonitorGroupClick = React.useCallback((e: any) => {
         e.stopPropagation();
@@ -122,17 +108,9 @@ export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
                         <primitive object={nodes['whiteboard']} castShadow/>
                     </group>
 
-                    {/*<mesh>*/}
-                    {/*    <boxGeometry args={[1, 1, 1]}/>*/}
-                    {/*    <meshBasicMaterial color="red" wireframe/>*/}
-                    {/*</mesh>*/}
                 </group>
             </group>
         </Bounds>
     );
 };
 
-// useGLTF.preload("/workstation.glb");
-useGLTF.preload(
-    "https://bjablasowebportfoliobucket.s3.us-west-1.amazonaws.com/3DModals/workstation.glb"
-);

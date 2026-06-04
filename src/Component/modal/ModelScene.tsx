@@ -66,91 +66,93 @@ export const ModelScene: React.FC= () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
     return (
-        <Canvas
-            style={{ width: '100%', height: '100vh' }}
-            camera={{
-                position: [-1300.17, 500, 500],
-                rotation: [1.361, 0, -45.2],
-                fov: 70,
-                far: 10000
-            }}
-            shadows
-            frameloop="always"
-            dpr={window.devicePixelRatio}   // ← lock to exact device DPR, never drops
-            gl={{
-                antialias: true,
-                alpha: true,
-                powerPreference: "high-performance",  // ← prevents GPU throttling
-                preserveDrawingBuffer: true,           // ← prevents buffer loss on idle
-            }}
-        >
-            {/*<CameraFovClamper />*/}
-            {/*<CameraResizeHandler />*/}
-            <CameraPositionTracker />
-            <HtmlSharpener />
-            <ambientLight intensity={.3} />
-            <directionalLight
-                color="white"
-                intensity={.3}
-                position={[1000, 1000, 500]}
-                castShadow
-                shadow-mapSize={[1024, 1024]}
-                shadow-camera-left={-1000}
-                shadow-camera-right={1000}
-                shadow-camera-top={1000}
-                shadow-camera-bottom={-1000}
-                shadow-camera-near={1}
-                shadow-camera-far={3000}
-            />
-
-            <Suspense fallback={null}>
-                <Model onMonitorClick={handleMonitorClick} />
-                <BackWall />
-                <LeftWall />
-                <RightWall />
-                <Flooring />
-                <Environment preset="night" background={false} />
-            </Suspense>
-
-            {/* ✅ CHANGED: only mounts in intro mode */}
-            {cameraMode === 'intro' && (
-                <OrbitControls
-                    ref={orbitRef}
-                    onEnd={handleControlsEnd}
-                    enableZoom={false}
-                    enablePan={false}
-                    enableRotate={false}
-                    minPolarAngle={0}
-                    maxPolarAngle={Math.PI / 2.6}
+        <div  className="absolute inset-0">
+            <Canvas
+                style={{ width: '100%', height: '100vh' }}
+                camera={{
+                    position: [-1300.17, 500, 500],
+                    rotation: [1.361, 0, -45.2],
+                    fov: 70,
+                    far: 10000
+                }}
+                shadows
+                frameloop="always"
+                dpr={window.devicePixelRatio}   // ← lock to exact device DPR, never drops
+                gl={{
+                    antialias: true,
+                    alpha: true,
+                    powerPreference: "high-performance",  // ← prevents GPU throttling
+                    preserveDrawingBuffer: true,           // ← prevents buffer loss on idle
+                }}
+            >
+                {/*<CameraFovClamper />*/}
+                {/*<CameraResizeHandler />*/}
+                <CameraPositionTracker />
+                <HtmlSharpener />
+                <ambientLight intensity={.3} />
+                <directionalLight
+                    color="white"
+                    intensity={.3}
+                    position={[1000, 1000, 500]}
+                    castShadow
+                    shadow-mapSize={[1024, 1024]}
+                    shadow-camera-left={-1000}
+                    shadow-camera-right={1000}
+                    shadow-camera-top={1000}
+                    shadow-camera-bottom={-1000}
+                    shadow-camera-near={1}
+                    shadow-camera-far={3000}
                 />
-            )}
 
-            {/* ✅ CHANGED: was `isActive={isMonitorActive && !isManualControl}` — now uses cameraMode */}
-            <MonitorCameraController
-                monitor={monitorObject}
-                cameraMode={cameraMode}
-                orbitRef={orbitRef}
-            />
+                <Suspense fallback={null}>
+                    <Model onMonitorClick={handleMonitorClick} />
+                    <BackWall />
+                    <LeftWall />
+                    <RightWall />
+                    <Flooring />
+                    <Environment preset="night" background={false} />
+                </Suspense>
 
-            {/* ✅ CHANGED: was `cameraMode === 'intro'` — now correctly `cameraMode === 'manual'` */}
-            {cameraMode === 'manual' && (
-                <>
-                    <ManualControl
-                        isActive={true}
-                        manualRef={manualRef}
-                    />
+                {/* ✅ CHANGED: only mounts in intro mode */}
+                {cameraMode === 'intro' && (
                     <OrbitControls
-                        ref={manualRef}
+                        ref={orbitRef}
                         onEnd={handleControlsEnd}
-                        enableZoom={true}
-                        enablePan={true}
-                        enableRotate={true}
+                        enableZoom={false}
+                        enablePan={false}
+                        enableRotate={false}
                         minPolarAngle={0}
                         maxPolarAngle={Math.PI / 2.6}
                     />
-                </>
-            )}
+                )}
 
-        </Canvas>
+                {/* ✅ CHANGED: was `isActive={isMonitorActive && !isManualControl}` — now uses cameraMode */}
+                <MonitorCameraController
+                    monitor={monitorObject}
+                    cameraMode={cameraMode}
+                    orbitRef={orbitRef}
+                />
+
+                {/* ✅ CHANGED: was `cameraMode === 'intro'` — now correctly `cameraMode === 'manual'` */}
+                {cameraMode === 'manual' && (
+                    <>
+                        <ManualControl
+                            isActive={true}
+                            manualRef={manualRef}
+                        />
+                        <OrbitControls
+                            ref={manualRef}
+                            onEnd={handleControlsEnd}
+                            enableZoom={true}
+                            enablePan={true}
+                            enableRotate={true}
+                            minPolarAngle={0}
+                            maxPolarAngle={Math.PI / 2.6}
+                        />
+                    </>
+                )}
+
+            </Canvas>
+        </div>
     );
 };
