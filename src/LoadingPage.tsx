@@ -124,7 +124,7 @@ const LoadingPageContent = ()=>{
 }
 export const LoadingPage: React.FC<LoadingPageProps> = ({setTransition}) => {
     //set loadingComplete when loading progress reach 100%
-    const [loadingCompleted, setLoadingCompleted] = React.useState(true);
+    const [loadingCompleted] = React.useState(true);
 
      function nextHandler(){
          setTransition(true)
