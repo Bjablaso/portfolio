@@ -1,19 +1,11 @@
 import * as React from "react";
+import {Box} from 'lucide-react'
 
 export const Cube: React.FC = () => {
     return (
-        <div className="flex items-center justify-center object-contain
-        rounded-md relative bottom-3
-        ">
-            <img   className="
-                       h-8
-                       h-8
-                       text-white
-                "
-                   src="/assets/box.svg"
-                   alt="Edge Icon"
-            />
-
+        <div className="inline-flex items-center justify-center ">
+            <Box size={35}/>
         </div>
+
     );
 };
