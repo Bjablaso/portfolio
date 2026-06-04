@@ -145,7 +145,7 @@ export const LoadingPage: React.FC<LoadingPageProps> = ({setTransition}) => {
 
                                 <button
                                     className="border-b-2 border-white hoverable"
-                                    onClick={() => setTransition(true)}
+                                    onClick={nextHandler}
                                 >
                                     Open here
                                 </button>
@@ -161,7 +161,7 @@ export const LoadingPage: React.FC<LoadingPageProps> = ({setTransition}) => {
 
                                 <button
                                     className="border-b-2 border-black hoverable"
-                                    onClick={() => setTransition(true)}
+                                    onClick={nextHandler}
                                 >
                                     Open here
                                 </button>
