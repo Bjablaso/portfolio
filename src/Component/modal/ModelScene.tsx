@@ -31,6 +31,9 @@ export const ModelScene: React.FC= () => {
         if (focus) setCamera('monitor');
     };
 
+    useEffect(() => {
+        console.log(cameraMode)
+    }, [cameraMode]);
 
 
     useCameraIntro(orbitRef, {

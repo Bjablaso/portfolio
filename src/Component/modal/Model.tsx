@@ -32,12 +32,18 @@ const MonitorScreen = memo(({ rotation, position, modelMonitorRef,  isInteractiv
             pointerEvents={isInteractive? 'auto' : 'none'}
         >
             <div
-                onPointerDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => {
+                    if (isInteractive) e.stopPropagation();
+                }}
+                onContextMenu={(e) => {
+                    if (!isInteractive) return;
+                    e.preventDefault();
+                }}
                 style={{
                     width: '488px',
                     height: '286px',
                     overflow: 'hidden',
-                    pointerEvents: isInteractive ? 'auto' : 'auto',
+                    pointerEvents: isInteractive ? 'auto' : 'none',
                 }}
             >
                 <DeskTop/>
