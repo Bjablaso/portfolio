@@ -1,19 +1,93 @@
 import {Bounds, Html, useGLTF} from "@react-three/drei";
-import { useRef, useMemo, memo} from "react";
+import {useRef, useMemo, memo} from "react";
 import {DeskTop} from "../ui/DeskTop.tsx";
 import * as React from "react";
 import {Object3D} from "three";
 import * as THREE from "three";
 import {modelClickStore} from "../../Store/useModelClick.tsx";
 import {ModelURL} from "../../api/modelLoader.ts";
+import {useFrame, useThree} from "@react-three/fiber";
 
 
 interface ModelProps {
     onMonitorClick?: (monitor: THREE.Object3D, focus: boolean) => void;
     cameraMode: 'intro' | 'monitor' | 'manual';
 }
-
-
+//
+// const MonitorScreen = memo(({
+//                                 rotation,
+//                                 position,
+//                                 modelMonitorRef,
+//                                 isInteractive
+//                             }: {
+//     rotation: THREE.Euler,
+//     position: [number, number, number],
+//     modelMonitorRef: React.RefObject<THREE.Object3D>,
+//     isInteractive: boolean
+// }) => {
+//     const { camera } = useThree();
+//     const [visible, setVisible] = React.useState(true);
+//
+//     const screenWorldPosition = React.useRef(new THREE.Vector3());
+//     const screenNormal = React.useRef(new THREE.Vector3());
+//     const cameraDirection = React.useRef(new THREE.Vector3());
+//     const quaternion = React.useRef(new THREE.Quaternion());
+//
+//     useFrame(() => {
+//         if (!modelMonitorRef.current) return;
+//
+//         modelMonitorRef.current.getWorldPosition(screenWorldPosition.current);
+//         modelMonitorRef.current.getWorldQuaternion(quaternion.current);
+//
+//         screenNormal.current
+//             .set(0, 0, -1)
+//             .applyQuaternion(quaternion.current)
+//             .normalize();
+//
+//         cameraDirection.current
+//             .subVectors(camera.position, screenWorldPosition.current)
+//             .normalize();
+//
+//         const dot = screenNormal.current.dot(cameraDirection.current);
+//
+//         // Shows from front, hides from side/back
+//         const shouldBeVisible = dot > 0.25;
+//
+//         if (visible !== shouldBeVisible) {
+//             setVisible(shouldBeVisible);
+//         }
+//     });
+//
+//     if (!visible) return null;
+//
+//     return (
+//         <Html
+//             transform
+//             sprite={false}
+//             position={position}
+//             rotation={rotation}
+//             distanceFactor={5}
+//             zIndexRange={[100, 0]}
+//             occlude={[modelMonitorRef]}
+//             pointerEvents={isInteractive ? "auto" : "none"}
+//         >
+//             <div
+//                 onPointerDown={(e) => {
+//                     if (isInteractive) e.stopPropagation();
+//                 }}
+//                 style={{
+//                     width: "488px",
+//                     height: "286px",
+//                     overflow: "hidden",
+//                     pointerEvents: isInteractive ? "auto" : "none",
+//                 }}
+//             >
+//                 <DeskTop />
+//             </div>
+//         </Html>
+//     );
+// });
+//
 const MonitorScreen = memo(({ rotation, position, modelMonitorRef,  isInteractive}: {
     rotation: THREE.Euler,
     position: [number, number, number]
