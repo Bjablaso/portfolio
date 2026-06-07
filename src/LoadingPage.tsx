@@ -1,11 +1,8 @@
-// import { LuBox } from "react-icons/lu";
-// import {loadingDataInstruction} from './assest/json/LoadingScreen.tsx'
 
 import * as React from "react";
 import {LoadingScreenBackground} from "./Background/LoadingScreenBackground.tsx";
 import {CustomCursor} from "./CustomCursor.tsx";
 import {useProgress} from "@react-three/drei";
-
 
 interface LoadingPageProps {
       setTransition: (value: boolean) => void;
