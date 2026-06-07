@@ -49,7 +49,7 @@ const Loader:React.FC<LoaderProps> = ({ setLoadingCompleted }) => {
 
         return (
             <div className="w-full h-full">
-                <div className="grid grid-rows-[45%_10%_45%] w-full h-full">
+                <div className="grid grid-rows-[47%_6%_47%] w-full h-full">
                     <div></div>
 
                     <div className="flex flex-col w-full h-full text-white items-center justify-center">

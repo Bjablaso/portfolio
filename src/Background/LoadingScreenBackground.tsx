@@ -137,18 +137,6 @@ export function LoadingScreenBackground({
                     </radialGradient>
                 </defs>
 
-                {/* ── DESK SURFACE ── */}
-                {/*<rect x="0" y="574" width="1440" height="326" fill="url(#lsb-desk)" />*/}
-                {/*<rect x="0" y="574" width="1440" height="1.5" fill="rgba(255,255,255,0.055)" />*/}
-                {/*<rect x="0" y="575.5" width="1440" height="1" fill="rgba(255,255,255,0.02)" />*/}
-                {/*{[6,14,24,38,56,80,110,148].map((y, i) => (*/}
-                {/*    <rect key={i} x="0" y={574+y} width="1440" height="1" fill={`rgba(255,255,255,${0.008-i*0.0008})`} />*/}
-                {/*))}*/}
-
-                {/* ── DESK REFLECTION ── */}
-                {/*<ellipse cx="720" cy="580" rx="290" ry="48" fill="url(#lsb-refl)" filter="url(#lsb-glow)" opacity="0.85" />*/}
-
-
                 {/* ── STEAM ── */}
                 <g filter="url(#lsb-steam-f)">
                     <path d="M 1165,492 C 1162,478 1167,466 1163,455 C 1159,444 1164,433 1161,421" fill="none" stroke="rgba(205,215,232,0.52)" strokeWidth="2.2" strokeLinecap="round" className="lsb-steam-1" />
@@ -180,45 +168,3 @@ export function LoadingScreenBackground({
     );
 }
 
-
-// interface LoadingScreenBackgroundProps {
-//     children?: React.ReactNode;
-// }
-//
-// export function LoadingScreenBackground({ children }: LoadingScreenBackgroundProps) {
-//     return (
-//         <div
-//             className="fixed inset-0 overflow-hidden"
-//             style={{ background: "linear-gradient(15deg, #101010 0%, #252525 100%)" }}
-//         >
-//             {/* Vertical silver gradient — top to bottom */}
-//             <div
-//                 className="absolute inset-0"
-//                 style={{
-//                     background:
-//                         "linear-gradient(to bottom, rgba(180,185,192,0.18) 0%, rgba(120,125,132,0.08) 40%, transparent 100%)",
-//                 }}
-//             />
-//
-//             {/* Side vignette */}
-//             <div
-//                 className="absolute inset-0"
-//                 style={{
-//                     background:
-//                         "linear-gradient(to right, rgba(0,0,0,0.55) 0%, transparent 22%, transparent 78%, rgba(0,0,0,0.55) 100%)",
-//                 }}
-//             />
-//
-//             {/* Corner vignette */}
-//             <div
-//                 className="absolute inset-0"
-//                 style={{
-//                     background:
-//                         "radial-gradient(ellipse 75% 72% at 50% 48%, transparent 30%, rgba(0,0,0,0.82) 100%)",
-//                 }}
-//             />
-//
-//             {children && <div className="relative z-10 w-full h-full">{children}</div>}
-//         </div>
-//     );
-// }
