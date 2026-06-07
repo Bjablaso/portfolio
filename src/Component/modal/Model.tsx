@@ -10,13 +10,15 @@ import {ModelURL} from "../../api/modelLoader.ts";
 
 interface ModelProps {
     onMonitorClick?: (monitor: THREE.Object3D, focus: boolean) => void;
+    cameraMode: 'intro' | 'monitor' | 'manual';
 }
 
 
-const MonitorScreen = memo(({ rotation, position, modelMonitorRef }: {
+const MonitorScreen = memo(({ rotation, position, modelMonitorRef,  isInteractive}: {
     rotation: THREE.Euler,
     position: [number, number, number]
     modelMonitorRef: React.RefObject<THREE.Object3D>
+    isInteractive: boolean
 }) => {
     return (
         <Html
@@ -27,7 +29,7 @@ const MonitorScreen = memo(({ rotation, position, modelMonitorRef }: {
             distanceFactor={5}
             zIndexRange={[100, 0]}
              occlude={[modelMonitorRef]}
-            pointerEvents="auto"
+            pointerEvents={isInteractive? 'auto' : 'none'}
         >
             <div
                 onPointerDown={(e) => e.stopPropagation()}
@@ -35,7 +37,7 @@ const MonitorScreen = memo(({ rotation, position, modelMonitorRef }: {
                     width: '488px',
                     height: '286px',
                     overflow: 'hidden',
-                    pointerEvents: 'auto',
+                    pointerEvents: isInteractive ? 'auto' : 'auto',
                 }}
             >
                 <DeskTop/>
@@ -45,7 +47,7 @@ const MonitorScreen = memo(({ rotation, position, modelMonitorRef }: {
 });
 
 
-export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
+export const Model: React.FC<ModelProps> = ({ onMonitorClick, cameraMode }) => {
 
 
     const {nodes} = useGLTF(`${ModelURL}/workstation.glb`)
@@ -88,6 +90,7 @@ export const Model: React.FC<ModelProps> = ({ onMonitorClick }) => {
                                     rotation={screenRotation}
                                     position={screenPosition}
                                     modelMonitorRef={monitorRef}
+                                    isInteractive={ cameraMode === 'monitor'}
                                 />
                             </primitive>
                         </group>
