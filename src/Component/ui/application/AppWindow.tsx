@@ -3,7 +3,7 @@ import type {ApplicationRunning} from "./DestopInterfaces.ts";
 
 
 
-export  const AppWindow: React.FC<ApplicationRunning> = ({}) => {
+export  const AppWindow: React.FC<ApplicationRunning> = () => {
 
     return(
         <div>
@@ -12,3 +12,4 @@ export  const AppWindow: React.FC<ApplicationRunning> = ({}) => {
     )
 
 }
+

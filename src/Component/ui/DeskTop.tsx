@@ -5,6 +5,7 @@ import {Finder} from "../../assest/Icons/Finder.tsx";
 import {GlassContainer_two} from "./GlassContainer.tsx";
 import Divider from "./Divider.tsx";
 import {ManuBar} from "./ManuBar.tsx";
+import {DeskTopWorkSpace} from "./DeskTopWorkSpace.tsx";
 
 
 export const DeskTop = () => {
@@ -31,7 +32,7 @@ export const DeskTop = () => {
             </nav>
 
             <main className="border border-amber-500">
-
+                <DeskTopWorkSpace/>
             </main>
             <footer className="flex w-full h-full justify-center pt-1.5 ">
                 <GlassContainer_two
