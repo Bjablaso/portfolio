@@ -6,7 +6,7 @@ import {Object3D} from "three";
 import * as THREE from "three";
 import {modelClickStore} from "../../Store/useModelClick.tsx";
 import {ModelURL} from "../../api/modelLoader.ts";
-import {useFrame, useThree} from "@react-three/fiber";
+
 
 
 interface ModelProps {
