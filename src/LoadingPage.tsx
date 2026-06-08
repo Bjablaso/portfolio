@@ -1,11 +1,8 @@
-// import { LuBox } from "react-icons/lu";
-// import {loadingDataInstruction} from './assest/json/LoadingScreen.tsx'
 
 import * as React from "react";
 import {LoadingScreenBackground} from "./Background/LoadingScreenBackground.tsx";
 import {CustomCursor} from "./CustomCursor.tsx";
 import {useProgress} from "@react-three/drei";
-
 
 interface LoadingPageProps {
       setTransition: (value: boolean) => void;
@@ -49,7 +46,7 @@ const Loader:React.FC<LoaderProps> = ({ setLoadingCompleted }) => {
 
         return (
             <div className="w-full h-full">
-                <div className="grid grid-rows-[45%_10%_45%] w-full h-full">
+                <div className="grid grid-rows-[47%_6%_47%] w-full h-full">
                     <div></div>
 
                     <div className="flex flex-col w-full h-full text-white items-center justify-center">

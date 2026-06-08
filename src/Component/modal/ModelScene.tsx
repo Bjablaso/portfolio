@@ -25,11 +25,15 @@ export const ModelScene: React.FC= () => {
     const monitorObject = useMonitorFromStore();
 
 
+
     const handleMonitorClick = (_monitor: THREE.Object3D, focus: boolean) => {
         // ✅ any mode can transition to monitor by clicking the model
         if (focus) setCamera('monitor');
     };
 
+    useEffect(() => {
+        console.log(cameraMode)
+    }, [cameraMode]);
 
 
     useCameraIntro(orbitRef, {
@@ -105,7 +109,7 @@ export const ModelScene: React.FC= () => {
                 />
 
                 <Suspense fallback={null}>
-                    <Model onMonitorClick={handleMonitorClick} />
+                    <Model onMonitorClick={handleMonitorClick} cameraMode={cameraMode} />
                     <BackWall />
                     <LeftWall />
                     <RightWall />

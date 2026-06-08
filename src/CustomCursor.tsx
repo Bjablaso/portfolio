@@ -10,27 +10,15 @@ export const CustomCursor = () => {
                 x: e.clientX,
                 y: e.clientY,
             });
-        };
 
-        const mouseEnterHandler = () => setHovering(true);
-        const mouseLeaveHandler = () => setHovering(false);
+            const target = e.target as HTMLElement;
+            setHovering(Boolean(target.closest(".hoverable")));
+        };
 
         document.addEventListener("mousemove", mouseMoveHandler);
 
-        const hoverElements = document.querySelectorAll(".hoverable");
-
-        hoverElements.forEach((element) => {
-            element.addEventListener("mouseenter", mouseEnterHandler);
-            element.addEventListener("mouseleave", mouseLeaveHandler);
-        });
-
         return () => {
             document.removeEventListener("mousemove", mouseMoveHandler);
-
-            hoverElements.forEach((element) => {
-                element.removeEventListener("mouseenter", mouseEnterHandler);
-                element.removeEventListener("mouseleave", mouseLeaveHandler);
-            });
         };
     }, []);
 

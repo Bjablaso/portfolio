@@ -11,6 +11,8 @@ import {useCameraStore} from "../../Store/cameraStore.tsx";
 
 interface HeadingComponentProps {
     audioRef: RefObject<HTMLAudioElement | null>;
+    // onManualControl : (active: boolean)=> void;
+    // cameraMode: UIMode;
 }
 export const HeadingComponent: React.FC<HeadingComponentProps> = ({audioRef}) => {
     const [isSpeakerActive, setisSpeakerActive] = useState<boolean>(true)
@@ -54,7 +56,6 @@ export const HeadingComponent: React.FC<HeadingComponentProps> = ({audioRef}) =>
 
                         if (cameraMode === 'manual') {
                             setCamera('intro');
-
                         } else {
 
                             setCamera('manual');

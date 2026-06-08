@@ -14,6 +14,8 @@ function App(){
     function enterPortFolio(value: boolean){
         setEntered(value);
     }
+
+
     return (
         <div className="relative w-screen h-screen overflow-hidden">
 
