@@ -70,7 +70,7 @@ export const ApplicationSubManu: React.FC<ApplicationSubManuProps> = ({
                         onMouseLeave={scheduleClose}
                         onClick={() => handleClick(appManuItem, index)}
                         className={`
-                            cursor-pointer px-1.5 py-0.5 rounded-[4px] select-none
+                            cursor-pointer px-1.5 py-0.5 rounded-[4px] select-none 
                             ${
                             activeIndex === index
                                 ? "bg-white/20 text-white"
@@ -78,7 +78,12 @@ export const ApplicationSubManu: React.FC<ApplicationSubManuProps> = ({
                         }
                         `}
                     >
-                        {appManuItem.itemName}
+                        {appManuItem.itemName === "Preview" ?
+                            <div className="text-center font-bold">{appManuItem.itemName}</div>
+                            :
+                            <div>{appManuItem.itemName} </div>
+                        }
+
                     </div>
                 ))}
             </div>
