@@ -119,6 +119,7 @@ const MonitorScreen = memo(({ rotation, position, modelMonitorRef,  isInteractiv
                     overflow: 'hidden',
                     pointerEvents: isInteractive ? 'auto' : 'none',
                 }}
+                className="text-[0.4rem]"
             >
                 <DeskTop/>
             </div>
