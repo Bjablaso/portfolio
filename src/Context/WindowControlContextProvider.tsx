@@ -1,39 +1,37 @@
-import {createContext, useReducer, useRef} from "react";
+import {useReducer, useRef} from "react";
 import * as React from "react";
 import {initalWindoStructure, windowReducer} from "../Reducer/WindowReducer.ts";
-import type {WindowContextType} from "../Interfaces/WindowIteface.ts";
-
-
+import { WindowContext } from "./WindowContext.ts";
 
 interface WindowControlProps {
     children: React.ReactNode;
 }
 
-
- const WindowContext = createContext<WindowContextType | null>(null);
-export const WindowControlConext:React.FC<WindowControlProps> = ({children}) => {
+export const WindowControlContextProvider:React.FC<WindowControlProps> = ({children}) => {
     const [windowState, dispatch]= useReducer( windowReducer, initalWindoStructure)
     const windowRef = useRef<HTMLDivElement | null>(null);
+    const parentRef = useRef<HTMLDivElement | null>(null);
+  //  const [currentWindowHash, setWindowIdentifierHash ]= useState<number | null>(null)
 
-    // move into a reducer
-    // const [onExit, setOnExit] = React.useState(false);
-    // const [onMinimize, setOnMinimize] = React.useState(false);
-    // const [onMaximize, setOnMaximize] = React.useState(false);
-
+    // const  windowID = (value: number)=> {
+    //     setWindowIdentifierHash(value)
+    // }
+    //
 
 
     return(
        <WindowContext.Provider
            value={
-             [ windowState,
-            dispatch,
-             windowRef
-             ]
+               {
+                   windowState,
+                   dispatch,
+                   windowRef,
+                   parentRef,
+               }
            }
        >
            {children}
-
        </WindowContext.Provider>
-
     )
 }
+
