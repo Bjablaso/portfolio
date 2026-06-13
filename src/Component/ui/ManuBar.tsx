@@ -236,7 +236,7 @@ export const ManuBar = () => {
 
 
     return (
-        <div className="w-full h-full flex justify-between text-[0.4rem] ">
+        <div className="w-full h-full flex justify-between text-inherit ">
             <div className="flex gap-1 justify-start items-center">
                 <div className="flex items-center">
                     {manuItem[0].icon && React.createElement(manuItem[0].icon as React.ElementType, { className: "text-white h-2 w-2" })}

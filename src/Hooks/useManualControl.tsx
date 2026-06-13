@@ -3,7 +3,7 @@ import { useThree, useFrame } from "@react-three/fiber";
 import { useRef, useEffect } from "react";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
-import { cameraTransitionStore } from "../Store/cameraTransitionStore"; // ✅ ADDED
+import { cameraTransitionStore } from "../Store/cameraTransitionStore";
 
 interface ManualControlProps {
     isActive: boolean;
@@ -16,49 +16,65 @@ export function ManualControl({ isActive, manualRef }: ManualControlProps) {
     const resetT      = useRef(0);
     const fromPos     = useRef(new THREE.Vector3());
     const fromTarget  = useRef(new THREE.Vector3());
-    const toPos       = new THREE.Vector3(-1000.17, 500, 1000);
-    const toTarget    = new THREE.Vector3(0, 0, 0);
+
+    // Destination — tweak these to taste
+    const toPos    = useRef(new THREE.Vector3(-1000.17, 500, 1000));
+    const toTarget = useRef(new THREE.Vector3(0, 0, 0));
+
+    // Scratch vectors — allocated once, reused every frame (no GC pressure)
+    const scratchPos    = useRef(new THREE.Vector3());
+    const scratchTarget = useRef(new THREE.Vector3());
 
     useEffect(() => {
         if (!isActive) return;
 
-        // ✅ CHANGED: read from cameraTransitionStore instead of camera.position directly
-        //    guarantees we get the position from the END of the last frame
-        //    not a mid-frame value that could be stale or already mutated
-        //    by another controller this frame
         fromPos.current.copy(cameraTransitionStore.position);
         fromTarget.current.copy(cameraTransitionStore.target);
 
         resetT.current      = 0;
         isResetting.current = true;
 
+        // Disable controls during the fly-in so they don't fight the animation
         if (manualRef.current) manualRef.current.enabled = false;
 
     }, [isActive]);
 
-    useFrame(() => {
+    useFrame((_, delta) => {
         if (!isResetting.current) return;
+        if (!manualRef.current) return;
 
-        resetT.current += 0.018;
+        // Use delta-based stepping so the speed is frame-rate independent
+        resetT.current += delta * 0.6;  // 0.6 ≈ ~1.6s total; tune to taste
         const t     = Math.min(resetT.current, 1);
         const eased = t < 0.5
             ? 2 * t * t
             : -1 + (4 - 2 * t) * t;
 
-        camera.position.lerpVectors(fromPos.current, toPos, eased);
+        // ── Move camera position ──────────────────────────────────────────────
+        scratchPos.current.lerpVectors(fromPos.current, toPos.current, eased);
+        camera.position.copy(scratchPos.current);
 
-        const currentTarget = new THREE.Vector3();
-        currentTarget.lerpVectors(fromTarget.current, toTarget, eased);
-        camera.lookAt(currentTarget);
-        camera.updateMatrixWorld();
+        // ── Move OrbitControls TARGET (not camera.lookAt) ────────────────────
+        // This is the key fix: OrbitControls derives the camera's look direction
+        // from its own .target. If you call camera.lookAt() separately, the two
+        // systems fight each other and distort the projection each frame.
+        scratchTarget.current.lerpVectors(fromTarget.current, toTarget.current, eased);
+        manualRef.current.target.copy(scratchTarget.current);
 
+        // Let OrbitControls compute the correct orientation from position+target
+        manualRef.current.update();
+
+        // ── End of transition ─────────────────────────────────────────────────
         if (t >= 1) {
             isResetting.current = false;
-            if (manualRef.current) {
-                manualRef.current.target.copy(toTarget);
-                manualRef.current.enabled = true;
-                manualRef.current.update();
-            }
+
+            // Snap to exact destinations — no floating point drift
+            camera.position.copy(toPos.current);
+            manualRef.current.target.copy(toTarget.current);
+            manualRef.current.update();
+
+            // Re-enable user control
+            manualRef.current.enabled = true;
         }
     });
 

@@ -1,10 +1,8 @@
-// @flow
-
 // ModelScene.tsx
-import {Canvas, invalidate} from "@react-three/fiber";
+import { Canvas, invalidate, useThree } from "@react-three/fiber";
 import * as React from 'react';
 import { Environment, OrbitControls } from "@react-three/drei";
-import {Suspense, useEffect, useRef} from "react";
+import { Suspense, useEffect, useRef } from "react";
 import '../../index.css'
 import { BackWall, Flooring, LeftWall, RightWall } from "./RoomSpace.tsx";
 import { Model } from "./Model.tsx";
@@ -15,26 +13,43 @@ import { useMonitorFromStore } from "../../Store/useMonitorFromStore.tsx";
 import { MonitorCameraController } from "../../Hooks/MonitorCameraController.tsx";
 import { CameraPositionTracker } from "../../Tracker/CameraPositionTracker.tsx";
 import { ManualControl } from "../../Hooks/useManualControl.tsx";
-import {useCameraStore} from "../../Store/cameraStore.tsx";
-import {useHtmlSharpener} from "../../Hooks/useHtmlSharpener.tsx";
+import { useCameraStore } from "../../Store/cameraStore.tsx";
 
-export const ModelScene: React.FC= () => {
+const LOCKED_FOV = 70;
+
+// Lives inside Canvas — has access to useThree.
+// Keeps camera aspect ratio in sync with the actual rendered size on every resize.
+const CameraResizeLock: React.FC = () => {
+    const { camera, gl, size } = useThree();
+
+    useEffect(() => {
+        if (!(camera instanceof THREE.PerspectiveCamera)) return;
+        camera.fov = LOCKED_FOV;
+        camera.aspect = size.width / size.height;
+        camera.updateProjectionMatrix();
+        invalidate();
+    }, [camera, size.width, size.height]);
+
+    useEffect(() => {
+        gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }, [gl]);
+
+    return null;
+};
+
+export const ModelScene: React.FC = () => {
     const orbitRef = useRef<OrbitControlsImpl>(null);
     const manualRef = useRef<OrbitControlsImpl>(null);
     const { cameraMode, setCamera } = useCameraStore();
     const monitorObject = useMonitorFromStore();
 
-
-
     const handleMonitorClick = (_monitor: THREE.Object3D, focus: boolean) => {
-        // ✅ any mode can transition to monitor by clicking the model
         if (focus) setCamera('monitor');
     };
 
     useEffect(() => {
-        console.log(cameraMode)
+        console.log(cameraMode);
     }, [cameraMode]);
-
 
     useCameraIntro(orbitRef, {
         startX: -1300,
@@ -46,57 +61,57 @@ export const ModelScene: React.FC= () => {
     });
 
     const handleControlsEnd = React.useCallback(() => {
-        // force a few extra frames after controls stop
         invalidate();
         setTimeout(() => invalidate(), 50);
         setTimeout(() => invalidate(), 100);
         setTimeout(() => invalidate(), 200);
     }, []);
 
-    const HtmlSharpener = () => {
-        useHtmlSharpener();
-        return null;
-    };
-
     useEffect(() => {
-        // Prevent browser from dropping frame rate when tab loses focus
         const lock = setInterval(() => invalidate(), 1000);
         return () => clearInterval(lock);
     }, []);
 
-    useEffect(() => {
-        const handleResize = () => invalidate();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
     return (
-        <div  className="absolute inset-0">
+        // This div must be the full screen. It inherits from App's
+        // "absolute inset-0" — but we restate position/size here
+        // so ModelScene is self-contained regardless of parent changes.
+        <div
+            style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+            }}
+        >
             <Canvas
-                style={{ width: '100%', height: '100vh' }}
+                // No explicit width/height — Canvas reads its container via
+                // ResizeObserver and always matches it exactly.
+                style={{ display: 'block', width: '100%', height: '100%' }}
                 camera={{
                     position: [-1300.17, 500, 500],
                     rotation: [1.361, 0, -45.2],
-                    fov: 70,
-                    far: 10000
+                    fov: LOCKED_FOV,
+                    far: 10000,
                 }}
                 shadows
                 frameloop="always"
-                dpr={window.devicePixelRatio}   // ← lock to exact device DPR, never drops
+                dpr={[1, 2]}
                 gl={{
                     antialias: true,
                     alpha: true,
-                    powerPreference: "high-performance",  // ← prevents GPU throttling
-                    preserveDrawingBuffer: true,           // ← prevents buffer loss on idle
+                    powerPreference: "high-performance",
+                    preserveDrawingBuffer: true,
                 }}
             >
-                {/*<CameraFovClamper />*/}
-                {/*<CameraResizeHandler />*/}
+                <CameraResizeLock />
                 <CameraPositionTracker />
-                <HtmlSharpener />
-                <ambientLight intensity={.3} />
+
+                <ambientLight intensity={0.3} />
                 <directionalLight
                     color="white"
-                    intensity={.3}
+                    intensity={0.3}
                     position={[1000, 1000, 500]}
                     castShadow
                     shadow-mapSize={[1024, 1024]}
@@ -117,7 +132,6 @@ export const ModelScene: React.FC= () => {
                     <Environment preset="night" background={false} />
                 </Suspense>
 
-                {/* ✅ CHANGED: only mounts in intro mode */}
                 {cameraMode === 'intro' && (
                     <OrbitControls
                         ref={orbitRef}
@@ -130,20 +144,15 @@ export const ModelScene: React.FC= () => {
                     />
                 )}
 
-                {/* ✅ CHANGED: was `isActive={isMonitorActive && !isManualControl}` — now uses cameraMode */}
                 <MonitorCameraController
                     monitor={monitorObject}
                     cameraMode={cameraMode}
                     orbitRef={orbitRef}
                 />
 
-                {/* ✅ CHANGED: was `cameraMode === 'intro'` — now correctly `cameraMode === 'manual'` */}
                 {cameraMode === 'manual' && (
                     <>
-                        <ManualControl
-                            isActive={true}
-                            manualRef={manualRef}
-                        />
+                        <ManualControl isActive={true} manualRef={manualRef} />
                         <OrbitControls
                             ref={manualRef}
                             onEnd={handleControlsEnd}
@@ -155,8 +164,205 @@ export const ModelScene: React.FC= () => {
                         />
                     </>
                 )}
-
             </Canvas>
         </div>
     );
 };
+// // ModelScene.tsx
+// import { Canvas, invalidate } from "@react-three/fiber";
+// import * as React from 'react';
+// import { Environment, OrbitControls } from "@react-three/drei";
+// import { Suspense, useEffect, useRef } from "react";
+// import '../../index.css'
+// import { BackWall, Flooring, LeftWall, RightWall } from "./RoomSpace.tsx";
+// import { Model } from "./Model.tsx";
+// import * as THREE from "three";
+// import { useCameraIntro } from "../../Hooks/useCameraIntro.tsx"
+// import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+// import { useMonitorFromStore } from "../../Store/useMonitorFromStore.tsx";
+// import { MonitorCameraController } from "../../Hooks/MonitorCameraController.tsx";
+// import { CameraPositionTracker } from "../../Tracker/CameraPositionTracker.tsx";
+// import { ManualControl } from "../../Hooks/useManualControl.tsx";
+// import { useCameraStore } from "../../Store/cameraStore.tsx";
+//
+// // ─── Fixed virtual canvas resolution ──────────────────────────────────────────
+// const BASE_W = 1920;
+// const BASE_H = 1080;
+//
+// // ─── Hook: compute uniform scale to fill viewport without stretching ──────────
+// const useScaleToFit = (baseW: number, baseH: number) => {
+//     const [scale, setScale] = React.useState(1);
+//
+//     useEffect(() => {
+//         const update = () => {
+//             setScale(Math.min(window.innerWidth / baseW, window.innerHeight / baseH));
+//         };
+//         update();
+//         window.addEventListener('resize', update);
+//         return () => window.removeEventListener('resize', update);
+//     }, [baseW, baseH]);
+//
+//     return scale;
+// };
+//
+// export const ModelScene: React.FC = () => {
+//     const orbitRef = useRef<OrbitControlsImpl>(null);
+//     const manualRef = useRef<OrbitControlsImpl>(null);
+//     const { cameraMode, setCamera } = useCameraStore();
+//     const monitorObject = useMonitorFromStore();
+//
+//     // FIX 1: compute scale factor so the fixed canvas fills the viewport
+//     const scale = useScaleToFit(BASE_W, BASE_H);
+//
+//     const handleMonitorClick = (_monitor: THREE.Object3D, focus: boolean) => {
+//         if (focus) setCamera('monitor');
+//     };
+//
+//     useEffect(() => {
+//         console.log(cameraMode);
+//     }, [cameraMode]);
+//
+//     useCameraIntro(orbitRef, {
+//         startX: -1300,
+//         endX: 1800,
+//         height: 500,
+//         distance: 1400,
+//         duration: 35000,
+//         enabled: cameraMode === 'intro',
+//     });
+//
+//     const handleControlsEnd = React.useCallback(() => {
+//         invalidate();
+//         setTimeout(() => invalidate(), 50);
+//         setTimeout(() => invalidate(), 100);
+//         setTimeout(() => invalidate(), 200);
+//     }, []);
+//
+//     // const HtmlSharpener = () => {
+//     //     useHtmlSharpener();
+//     //     return null;
+//     // };
+//
+//     useEffect(() => {
+//         // Prevent browser from dropping frame rate when tab loses focus
+//         const lock = setInterval(() => invalidate(), 1000);
+//         return () => clearInterval(lock);
+//     }, []);
+//
+//     // FIX 4: removed the resize → invalidate listener; the canvas is now
+//     // fixed-size so R3F doesn't need to be poked on window resize.
+//
+//     return (
+//         // FIX 1: outer shell — clips anything outside the viewport
+//         <div
+//             style={{
+//                 position: 'absolute',
+//                 inset: 0,
+//                 overflow: 'hidden',
+//                 display: 'flex',
+//                 alignItems: 'center',
+//                 justifyContent: 'center',
+//             }}
+//         >
+//             {/* FIX 1: inner shell — fixed virtual size, scaled uniformly by CSS.
+//                 The Canvas, all Html overlays, and every 3D object scale together
+//                 as one unit. The camera aspect ratio is permanently locked to
+//                 BASE_W / BASE_H and never recalculates on window resize. */}
+//             <div
+//                 style={{
+//                     width: BASE_W,
+//                     height: BASE_H,
+//                     transform: `scale(${scale})`,
+//                     transformOrigin: 'center center',
+//                     flexShrink: 0,
+//                 }}
+//             >
+//                 <Canvas
+//                     style={{ width: BASE_W, height: BASE_H }}
+//                     camera={{
+//                         position: [-1300.17, 500, 500],
+//                         rotation: [1.361, 0, -45.2],
+//                         fov: 70,
+//                         far: 10000,
+//                         aspect: BASE_W / BASE_H,   // FIX 1: locked — never drifts
+//                     }}
+//                     shadows
+//                     frameloop="always"
+//                     // FIX 3: removed dpr={window.devicePixelRatio} — that value
+//                     // is stale after display changes. Capped array form is safer.
+//                     dpr={[1, 2]}
+//                     gl={{
+//                         antialias: true,
+//                         alpha: true,
+//                         powerPreference: "high-performance",
+//                         preserveDrawingBuffer: true,
+//                     }}
+//                 >
+//                     <CameraPositionTracker />
+//                     {/*<HtmlSharpener />*/}
+//                     <ambientLight intensity={0.3} />
+//                     <directionalLight
+//                         color="white"
+//                         intensity={0.3}
+//                         position={[1000, 1000, 500]}
+//                         castShadow
+//                         shadow-mapSize={[1024, 1024]}
+//                         shadow-camera-left={-1000}
+//                         shadow-camera-right={1000}
+//                         shadow-camera-top={1000}
+//                         shadow-camera-bottom={-1000}
+//                         shadow-camera-near={1}
+//                         shadow-camera-far={3000}
+//                     />
+//
+//                     <Suspense fallback={null}>
+//                         <Model onMonitorClick={handleMonitorClick} cameraMode={cameraMode} />
+//                         <BackWall />
+//                         <LeftWall />
+//                         <RightWall />
+//                         <Flooring />
+//                         <Environment preset="night" background={false} />
+//                     </Suspense>
+//
+//                     {cameraMode === 'intro' && (
+//                         <OrbitControls
+//                             ref={orbitRef}
+//                             onEnd={handleControlsEnd}
+//                             enableZoom={false}
+//                             enablePan={false}
+//                             enableRotate={false}
+//                             minPolarAngle={0}
+//                             maxPolarAngle={Math.PI / 2.6}
+//                         />
+//                     )}
+//
+//                     <MonitorCameraController
+//                         monitor={monitorObject}
+//                         cameraMode={cameraMode}
+//                         orbitRef={orbitRef}
+//                     />
+//
+//                     {cameraMode === 'manual' && (
+//                         <>
+//                             <ManualControl
+//                                 isActive={true}
+//                                 manualRef={manualRef}
+//                             />
+//                             <OrbitControls
+//                                 ref={manualRef}
+//                                 onEnd={handleControlsEnd}
+//                                 enableZoom={true}
+//                                 enablePan={true}
+//                                 enableRotate={true}
+//                                 minPolarAngle={0}
+//                                 maxPolarAngle={Math.PI / 2.6}
+//                             />
+//                         </>
+//                     )}
+//
+//                 </Canvas>
+//             </div>
+//         </div>
+//     );
+// };
+
