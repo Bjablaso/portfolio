@@ -1,5 +1,9 @@
-import {Window} from "./Window.tsx";
+
 import {useWindowContext} from "../../Context/useWindowContext.ts";
+import {AdaptiveWindow} from "./AdaptiveWindow.tsx";
+import {WindowHeader} from "./WindowSystem/WindowHeader.tsx";
+import * as React from "react";
+
 
 export const DeskTopWorkSpace = () => {
     const {windowState} = useWindowContext();
@@ -13,12 +17,20 @@ export const DeskTopWorkSpace = () => {
                 if(item.isRunning){
 
                     return(
-                            <Window
-                                initialX={item.initialSizeX}
-                                initialY={item.initialSizeY}
-                                key={item.hash}
-                                hashNumber={item.hash}
-                            />
+                          <AdaptiveWindow initialX={item.initialSizeX}
+                                          initialY={item.initialSizeY}
+                                          hashNumber={item.hash}
+                                          key={item.hash}
+                                          dock="top"
+                                          headerSize="lg"
+                                          windowHeight={180}
+                                          windowWidth={280}
+                                          headerComponent={ <WindowHeader
+                                              hashParent={item.hash}
+                                              dock={"top"}
+                                          />}
+                                          bodyComponent={null}
+                          />
                         )
 
                 }
