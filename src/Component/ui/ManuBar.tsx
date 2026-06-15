@@ -68,20 +68,7 @@ const manuItem: ManuBarIcon[] = [
                 isActive: true,
                 isSubManu: true,
                 subItem: [
-                    {
-                        itemName: "Preview",
-                        type: "text",
-                        isActive: false,
-                        isSubManu: true,
-                        dropManuPosition: 0,
-                        dopItemList: [
-                            { description: "About Preview" },
-                            { description: "Settings..." },
-                            { description: "Hide Preview" },
-                            { description: "Hide Others" },
-                            { description: "Show All" },
-                        ]
-                    },
+
                     {
                         itemName: "File",
                         type: "text",
@@ -243,9 +230,9 @@ export const ManuBar = () => {
 
                 </div>
                 <div className="flex flex-row gap-1 items-center ">
-                    <div className="text-center font-bold ">
-                        {isApplicationRunning.itemName}
-                    </div>
+                    {/*<div className="text-center font-bold ">*/}
+                    {/*    {isApplicationRunning.itemName}*/}
+                    {/*</div>*/}
                     {
                         isApplicationRunning &&
                         <ApplicationSubManu subItem={isApplicationRunning?.subItem ?? []}
@@ -265,6 +252,10 @@ export const ManuBar = () => {
                             <div key={`${item.itemName}${index}`}  >
                                 {item.type === "icon" && item.icon && (() => {
                                     const IconComponent = item.icon;
+
+                                    if(item.itemName === "Search"){
+                                        return <IconComponent className="text-white h-2 w-2 hover:opacity-70" />
+                                    }
                                     return <IconComponent className="text-white h-2 w-2" />;
                                 })()}
                             </div>

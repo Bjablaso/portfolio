@@ -11,6 +11,7 @@ export const WindowControlContextProvider:React.FC<WindowControlProps> = ({child
     const [windowState, dispatch]= useReducer( windowReducer, initalWindoStructure)
     const windowRef = useRef<HTMLDivElement | null>(null);
     const parentRef = useRef<HTMLDivElement | null>(null);
+    //const manuBarDirection = "col" | "row";
   //  const [currentWindowHash, setWindowIdentifierHash ]= useState<number | null>(null)
 
     // const  windowID = (value: number)=> {
