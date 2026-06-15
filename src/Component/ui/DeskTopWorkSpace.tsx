@@ -2,7 +2,6 @@
 import {useWindowContext} from "../../Context/useWindowContext.ts";
 import {AdaptiveWindow} from "./AdaptiveWindow.tsx";
 import {WindowHeader} from "./WindowSystem/WindowHeader.tsx";
-import * as React from "react";
 
 
 export const DeskTopWorkSpace = () => {
