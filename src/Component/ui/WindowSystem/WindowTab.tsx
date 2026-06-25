@@ -11,32 +11,31 @@ interface WindowTabProps {
 
 export const WindowTab: React.FC<WindowTabProps> = ({background, hashParent, item}) => {
     const {windowState, dispatch} = useWindowContext();
-    const currentWindow = windowState.runningWindows.find(
-        win => win.hash === hashParent  // ✅ always points to the right window
+    const targetApp = windowState.runningApplication.find(app =>
+        app.windowState?.runningWindows.some(win => win.hash === hashParent)
     );
+
+    const currentWindow = targetApp?.windowState?.runningWindows.find(
+        win => win.hash === hashParent
+    );
+
+    if (!targetApp?.windowState || !currentWindow) return null;
 
 
     function MinusIcon() {
-        const Icon = windowState.tabControl.iconMinus;
+        const Icon = targetApp?.windowState?.tabControl.iconMinus;
+        if (!Icon) return null;
         return (
             <Icon
                 className="w-[0.3rem] h-[0.3rem]"
                 onClick={(e) => {
-                    if(!currentWindow) return
+                    if (!currentWindow) return;
                     e.stopPropagation();
-                    if(currentWindow?.windowTab.length > 1) {
-                        dispatch({
-                            type: "DELETE_TAB",
-                            payload: {windowHash: hashParent, tabHash: item.hash}
-                        });
-                    }else {
-                        dispatch({
-                            type: "EXIT",
-                            payload: {hash: hashParent}
-                        })
-
+                    if (currentWindow.windowTab.length > 1) {
+                        dispatch({ type: "DELETE_TAB", payload: { windowHash: hashParent, tabHash: item.hash } });
+                    } else {
+                        dispatch({ type: "EXIT", payload: { hash: hashParent } });
                     }
-
                 }}
             />
         );
@@ -55,7 +54,7 @@ export const WindowTab: React.FC<WindowTabProps> = ({background, hashParent, ite
             }}
         >
             <div className="text-white text-[0.2rem] truncate">{item.title}</div>
-            <div className="text-white hover:opacity-70">
+            <div className="text-white hover:opacity-70 ">
                 {MinusIcon()}
             </div>
         </div>
