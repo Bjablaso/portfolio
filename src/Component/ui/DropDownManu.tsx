@@ -1,7 +1,8 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
-import type { dropManuItems } from "./ManuBar.tsx";
+
 import { GlassContainer_two } from "./GlassContainer.tsx";
+import type {dropManuItems} from "../../Interfaces/WindowIteface.ts";
 
 interface DropDownManuProps {
     dropItems?: dropManuItems[];
@@ -40,7 +41,7 @@ export const DropDownManu: React.FC<DropDownManuProps> = ({
                 variant="default"
                 rounded="lg"
                 containerDirection="column"
-                className="gap-0 items-stretch overflow-hidden min-w-[120px] pt-1 pb-1"
+                className="gap-0 items-stretch overflow-hidden min-w-fit pt-1 pb-1"
             >
                 {dropItems.map((item, index) => (
                     <React.Fragment key={`${item.description}-${index}`}>
