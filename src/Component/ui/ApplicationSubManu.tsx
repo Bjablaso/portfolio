@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useRef, useState } from "react";
-import type { SubItem } from "./ManuBar.tsx";
 import { DropDownManu } from "./DropDownManu.tsx";
+import type {SubItem} from "../../Interfaces/WindowIteface.ts";
 
 interface ApplicationSubManuProps {
     subItem: SubItem[];
