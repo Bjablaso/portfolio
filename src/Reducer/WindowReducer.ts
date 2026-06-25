@@ -443,7 +443,7 @@ export const initialWindowStructure: ApplicationInfo=  {
                 },
                 runningWindows: [],
                 maxTab: 5,
-                maxWindow: 3,
+                maxWindow: 1,
                 zIndex: 10,
             },
             manuIcon: [
@@ -477,7 +477,7 @@ function randomX() {
 function  randomY(){
     return Math.floor(Math.random()*11);
 }
-const PREVIEW_Z = 0;
+
 
 function buildStack(
     apps: ComputerApplication[],
