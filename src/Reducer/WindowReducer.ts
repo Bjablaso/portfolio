@@ -1,35 +1,473 @@
 import {X, Minus, Expand, Plus} from "lucide-react";
-import type { WindowAction, WindowState} from "../Interfaces/WindowIteface.ts";
+import type {ApplicationInfo, ComputerApplication, WindowAction} from "../Interfaces/WindowIteface.ts";
+// import {
+//     IoBatteryFull,
+//     IoSearch,
+// } from "react-icons/io5";
+import {FaWifi, FaApple} from "react-icons/fa";
+import {IoBatteryFull, IoSearch} from "react-icons/io5";
 
-export const initalWindoStructure: WindowState=  {
-    windowControl: [
+
+
+export const initialWindowStructure: ApplicationInfo=  {
+    icon: FaApple,
+    runningApplication:[
         {
-            id: 1,
-            description: "exit",
-            icon: X,
-            color: "red",
+            applicationName: "Preview",
+            type: "text",
+            isActive: true,
+            isManu: true,
+            isBackground: true,
+            zIndex: 0,          // ← always base
+            applicationManu: [
+                {
+                    itemName: "Preview",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: false,
+                    dropManuPosition: 60,
+                    // dopItemList: [
+                    //     { description: "New Window" },
+                    //     { description: "New Tab" },
+                    //     { description: "Close Window" },
+                    //     { description: "Close Tab" },
+                    //     { description: "Print..." },
+                    // ],
+                },
+                {
+                    itemName: "File",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 60,
+                    dopItemList: [
+                        { description: "New Window" },
+                        { description: "Open..." },
+                        { description: "Close Window" },
+                        { description: "Save" },
+                    ]
+                },
+                {
+                    itemName: "Edit",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 90,
+                    dopItemList: [
+                        { description: "Undo" },
+                        { description: "Redo" },
+                        { description: "Cut" },
+                        { description: "Copy" },
+                        { description: "Paste" },
+                        { description: "Select All" },
+                    ]
+                },
+                {
+                    itemName: "View",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 120,
+                    dopItemList: []
+                },
+                {
+                    itemName: "Window",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 150,
+                    dopItemList: [
+                        { description: "Minimize" },
+                        { description: "Zoom" },
+                        { description: "Bring All to Front" },
+                    ]
+                },
+                {
+                    itemName: "Help",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 195,
+                    dopItemList: [
+                        { description: "Preview Help" },
+                    ]
+                },
+            ],
+            windowState: null,
+            manuIcon: [
+                {
+                    itemName: "Battery",
+                    type: "icon",
+                    isActive: false,
+                    icon: IoBatteryFull,
+
+                },
+                {
+                    itemName: "Wifi",
+                    type: "icon",
+                    isActive: false,
+                    icon: FaWifi,
+
+                },
+                {
+                    itemName: "Search",
+                    type: "icon",
+                    isActive: false,
+                    icon: IoSearch,
+
+                }
+            ]
         },
         {
-            id: 2,
-            description: "minimize",
-            icon: Minus,
-            color: "yellow",
+            applicationName: "Edge",
+            type: "text",
+            isActive: false,
+            isManu: true,
+            isBackground: false,
+            zIndex: 1,          // ← starts above Preview
+            applicationManu: [
+                {
+                    itemName: "Edge",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: false,
+                    dropManuPosition: 60,
+                    // dopItemList: [
+                    //     { description: "New Window" },
+                    //     { description: "New Tab" },
+                    //     { description: "Close Window" },
+                    //     { description: "Close Tab" },
+                    //     { description: "Print..." },
+                    // ],
+                },
+                {
+                    itemName: "File",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 60,
+                    dopItemList: [
+                        { description: "New Window" },
+                        { description: "New Tab" },
+                        { description: "Close Window" },
+                        { description: "Close Tab" },
+                        { description: "Print..." },
+                    ],
+                },
+
+                {
+                    itemName: "Edit",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 120,
+                    dopItemList: [
+                        { description: "Undo" },
+                        { description: "Redo" },
+                        { description: "Cut" },
+                        { description: "Copy" },
+                        { description: "Paste" },
+                    ],
+                },
+
+                {
+                    itemName: "View",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 180,
+                    dopItemList: [
+                        { description: "Zoom In" },
+                        { description: "Zoom Out" },
+                        { description: "Actual Size" },
+                        { description: "Full Screen" },
+                        { description: "Show Toolbar" },
+                    ],
+                },
+
+                {
+                    itemName: "History",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 260,
+                    dopItemList: [
+                        { description: "Home" },
+                        { description: "Back" },
+                        { description: "Forward" },
+                        { description: "Recently Closed" },
+                        { description: "Manage History" },
+                    ],
+                },
+
+                // {
+                //     itemName: "Favorites",
+                //     type: "text",
+                //     isActive: false,
+                //     isSubManu: true,
+                //     dropManuPosition: 350,
+                //     dopItemList: [
+                //         { description: "Add Favorite" },
+                //         { description: "Show Favorites" },
+                //         { description: "Manage Favorites" },
+                //     ],
+                // },
+
+                // {
+                //     itemName: "Profiles",
+                //     type: "text",
+                //     isActive: false,
+                //     isSubManu: true,
+                //     dropManuPosition: 450,
+                //     dopItemList: [
+                //         { description: "Sign In" },
+                //         { description: "Guest Profile" },
+                //         { description: "Profile Settings" },
+                //     ],
+                // },
+
+                {
+                    itemName: "Tab",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 540,
+                    dopItemList: [
+                        { description: "New Tab" },
+                        { description: "Next Tab" },
+                        { description: "Previous Tab" },
+                        { description: "Duplicate Tab" },
+                        { description: "Close Tab" },
+                    ],
+                },
+
+                // {
+                //     itemName: "Window",
+                //     type: "text",
+                //     isActive: false,
+                //     isSubManu: true,
+                //     dropManuPosition: 610,
+                //     dopItemList: [
+                //         { description: "Minimize" },
+                //         { description: "Zoom" },
+                //         { description: "Close Window" },
+                //         { description: "Bring To Front" },
+                //     ],
+                // },
+
+                {
+                    itemName: "Help",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 700,
+                    dopItemList: [
+                        { description: "Search Help" },
+                        { description: "Edge Help" },
+                        { description: "Update Edge" },
+                        { description: "Send Feedback" },
+                    ],
+                },
+            ],
+            windowState: {
+                windowControl: [
+                    {
+                        id: 1,
+                        description: "exit",
+                        icon: X,
+                        color: "#ff5f57"  // macOS red
+                    },
+                    {
+                        id: 2,
+                        description: "minimize",
+                        icon: Minus,
+                        color: "#febc2e"  // macOS yellow
+                    },
+                    {
+                        id: 0,
+                        description: "expand",
+                        icon: Expand,
+                        color: "#28c840"  // macOS green
+                    }
+                ],
+                tabControl: {
+                    iconAdd: Plus,
+                    iconMinus: X,
+                    active: false
+                },
+                runningWindows: [],
+                maxTab: 5,
+                maxWindow: 5,
+                zIndex: 10
+            },
+            manuIcon: [
+                {
+                    itemName: "Battery",
+                    type: "icon",
+                    isActive: false,
+                    icon: IoBatteryFull,
+
+                },
+                {
+                    itemName: "Wifi",
+                    type: "icon",
+                    isActive: false,
+                    icon: FaWifi,
+
+                },
+                {
+                    itemName: "Search",
+                    type: "icon",
+                    isActive: false,
+                    icon: IoSearch,
+
+                }
+            ]
         },
         {
-            id: 3,
-            description: "expand",
-            icon: Expand,
-            color: "green",
+            applicationName: "Finder",
+            type: "text",
+            isActive: false,
+            isManu: true,
+            isBackground: true,
+            zIndex: 1,
+            applicationManu: [
+                {
+                    itemName: "File",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 60,
+                    dopItemList: [
+                        { description: "New Finder Window" },
+                        { description: "New Tab" },
+                        { description: "Open" },
+                        { description: "Close Window" },
+                        { description: "Find" },
+                    ],
+                },
+                {
+                    itemName: "Edit",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 120,
+                    dopItemList: [
+                        { description: "Undo" },
+                        { description: "Redo" },
+                        { description: "Cut" },
+                        { description: "Copy" },
+                        { description: "Paste" },
+                    ],
+                },
+                {
+                    itemName: "View",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 180,
+                    dopItemList: [
+                        { description: "as Icons" },
+                        { description: "as List" },
+                        { description: "as Columns" },
+                        { description: "Show Sidebar" },
+                        { description: "Enter Full Screen" },
+                    ],
+                },
+                {
+                    itemName: "Go",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 240,
+                    dopItemList: [
+                        { description: "Recents" },
+                        { description: "Documents" },
+                        { description: "Desktop" },
+                        { description: "Downloads" },
+                        { description: "Applications" },
+                    ],
+                },
+                {
+                    itemName: "Window",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 300,
+                    dopItemList: [
+                        { description: "Minimize" },
+                        { description: "Zoom" },
+                        { description: "Cycle Through Windows" },
+                        { description: "Bring All to Front" },
+                        { description: "Recents" },
+                    ],
+                },
+                {
+                    itemName: "Help",
+                    type: "text",
+                    isActive: false,
+                    isSubManu: true,
+                    dropManuPosition: 370,
+                    dopItemList: [
+                        { description: "Search Help" },
+                        { description: "Mac User Guide" },
+                        { description: "Tips for Your Mac" },
+                    ],
+                },
+            ],
+            windowState: {
+                windowControl: [
+                    {
+                        id: 1,
+                        description: "exit",
+                        icon: X,
+                        color: "#ff5f57",
+                    },
+                    {
+                        id: 2,
+                        description: "minimize",
+                        icon: Minus,
+                        color: "#febc2e",
+                    },
+                    {
+                        id: 3,
+                        description: "expand",
+                        icon: Expand,
+                        color: "#28c840",
+                    },
+                ],
+                tabControl: {
+                    iconAdd: Plus,
+                    iconMinus: X,
+                    active: false,
+                },
+                runningWindows: [],
+                maxTab: 5,
+                maxWindow: 3,
+                zIndex: 10,
+            },
+            manuIcon: [
+                {
+                    itemName: "Battery",
+                    type: "icon",
+                    isActive: false,
+                    icon: IoBatteryFull,
+                },
+                {
+                    itemName: "Wifi",
+                    type: "icon",
+                    isActive: false,
+                    icon: FaWifi,
+                },
+                {
+                    itemName: "Search",
+                    type: "icon",
+                    isActive: false,
+                    icon: IoSearch,
+                },
+            ],
         }
-    ],
-    tabControl: {
-        iconAdd: Plus,
-        iconMinus: X,
-       active: false
-    },
-    runningWindows: [],
-    maxTab: 5,
-    maxWindow: 5,
+    ]
 
 }
 
@@ -39,99 +477,166 @@ function randomX() {
 function  randomY(){
     return Math.floor(Math.random()*11);
 }
+const PREVIEW_Z = 0;
 
+function buildStack(
+    apps: ComputerApplication[],
+    foregroundAppName: string
+): ComputerApplication[] {
+    const maxZ = Math.max(...apps.map(app => app.zIndex));
+
+    return apps.map(app => {
+        const isForeground = app.applicationName === foregroundAppName;
+
+        return {
+            ...app,
+            isActive: isForeground || app.isActive,
+            isBackground: !isForeground,
+            zIndex: isForeground ? maxZ + 1 : app.zIndex
+        };
+    });
+}
+
+function findForegroundApp(apps: ComputerApplication[]) {
+    return apps
+        .filter(app => app.isActive)
+        .sort((a, b) => b.zIndex - a.zIndex)[0];
+}
 
 
 export function windowReducer(
-    state: WindowState,
+    state: ApplicationInfo,
     action: WindowAction
-): WindowState {
+): ApplicationInfo {
+
     switch (action.type) {
 
-        case "EXIT": {
-            if (state.runningWindows.length === 0) return state;
-
-            const remaining = state.runningWindows.filter(
-                win => win.hash !== action.payload.hash
+        case "CREATE_WINDOW": {
+            const targetIndex = state.runningApplication.findIndex(
+                app => app.applicationName === action.payload.app
             );
 
-            // If we closed the current window, promote the last remaining one
-            const wasCurrentClosed = state.runningWindows.find(
-                win => win.hash === action.payload.hash
-            )?.current;
+            if (targetIndex === -1) return state;
 
-            const updated = wasCurrentClosed && remaining.length > 0
-                ? remaining.map((win, i) =>
-                    i === remaining.length - 1 ? { ...win, current: true } : win
-                )
-                : remaining;
+            const targetApp = state.runningApplication[targetIndex];
+            const ws = targetApp.windowState;
 
-            return { ...state, runningWindows: updated };
-        }
-        //
-        // case "MINIMIZE": {
-        //     return {
-        //         ...state,
-        //         // windowControl: state.windowControl.map(control =>
-        //         //     control.description === "minimize"
-        //         //         ? { ...control, active: true }
-        //         //         : { ...control, active: false }
-        //         // )
-        //     };
-        // }
-        //
-        // case "EXPAND": {
-        //     return {
-        //         // ...state,
-        //         // windowControl: state.windowControl.map(control =>
-        //         //     control.description === "expand"
-        //         //         ? { ...control, active: true }
-        //         //         : { ...control, active: false }
-        //         // )
-        //     };
-        // }
+            if (!ws) return state;
 
-        case "CREATE_WINDOW": {
+            const currentWindows = ws.runningWindows;
+
+            if (currentWindows.length >= ws.maxWindow) return state;
+
             const newWindow = {
                 hash: Date.now() + Math.floor(Math.random() * 100000),
-                app: "EDGE",
-                title: "Microsoft Edge",
+                app: action.payload.app,
+                title: action.payload.app,
                 isRunning: true,
                 isClosed: false,
                 initialSizeX: randomX(),
                 initialSizeY: randomY(),
-                windowTab: [{
-                    hash: Date.now() + Math.floor(Math.random() * 100000),
-                    isRunning: true,
-                    isCurrentTab: true,
-                    title: "Initial"
-                 }
+                windowTab: [
+                    {
+                        hash: Date.now() + Math.floor(Math.random() * 100000),
+                        isRunning: true,
+                        isCurrentTab: true,
+                        title: "Initial"
+                    }
                 ],
-                current: true
+                current: true,
+                windowHeight: action.payload.windowHeight,
+                windowWidth: action.payload.windowWidth
             };
 
-            const updated = state.runningWindows.map(win =>{
-                return{
-                    ...win,
-                    current: false
-                }
-            })
+            const updatedApps = state.runningApplication.map(app => {
+                if (app.applicationName !== action.payload.app) return app;
+
+                return {
+                    ...app,
+                    isActive: true,
+                    windowState: {
+                        ...ws,
+                        runningWindows: [
+                            ...currentWindows.map(win => ({
+                                ...win,
+                                current: false
+                            })),
+                            newWindow
+                        ]
+                    }
+                };
+            });
+
             return {
                 ...state,
-                runningWindows: [
-                    ...updated,
-                    newWindow
-                ]
+                runningApplication: buildStack(updatedApps, action.payload.app)
+            };
+        }
+
+        case "EXIT": {
+            const targetApp = state.runningApplication.find(app =>
+                app.windowState?.runningWindows.some(
+                    win => win.hash === action.payload.hash
+                )
+            );
+
+            if (!targetApp || !targetApp.windowState) return state;
+
+            const remainingWindows =
+                targetApp.windowState.runningWindows.filter(
+                    win => win.hash !== action.payload.hash
+                );
+
+            const updatedApps = state.runningApplication.map(app => {
+                if (app.applicationName !== targetApp.applicationName) {
+                    return app;
+                }
+
+                return {
+                    ...app,
+                    isActive: remainingWindows.length > 0,
+                    isBackground: true,
+                    windowState: {
+                        ...targetApp.windowState!,
+                        runningWindows: remainingWindows
+                    }
+                };
+            });
+
+            const nextApp = findForegroundApp(updatedApps);
+
+            if (!nextApp) {
+                return {
+                    ...state,
+                    runningApplication: buildStack(updatedApps, "Preview")
+                };
+            }
+
+            return {
+                ...state,
+                runningApplication: buildStack(
+                    updatedApps,
+                    nextApp.applicationName
+                )
             };
         }
 
         case "CREATE_TAB": {
-            const targetWindow = state.runningWindows.find(
+            const targetApp = state.runningApplication.find(app =>
+                app.windowState?.runningWindows.some(
+                    win => win.hash === action.payload.windowHash
+                )
+            );
+
+            if (!targetApp || !targetApp.windowState) return state;
+
+            const ws = targetApp.windowState;
+
+            const targetWindow = ws.runningWindows.find(
                 win => win.hash === action.payload.windowHash
             );
 
-            // Guard: don't exceed maxTab
-            if (!targetWindow || targetWindow.windowTab.length >= state.maxTab) {
+            if (!targetWindow || targetWindow.windowTab.length >= ws.maxTab) {
                 return state;
             }
 
@@ -139,73 +644,178 @@ export function windowReducer(
                 hash: Date.now() + Math.floor(Math.random() * 100000),
                 title: action.payload.title,
                 isCurrentTab: true,
-                isRunning: true,
+                isRunning: true
             };
+
+            const updatedApps = state.runningApplication.map(app => {
+                if (app.applicationName !== targetApp.applicationName) {
+                    return app;
+                }
+
+                return {
+                    ...app,
+                    windowState: {
+                        ...ws,
+                        runningWindows: ws.runningWindows.map(win => {
+                            if (win.hash !== action.payload.windowHash) {
+                                return win;
+                            }
+
+                            return {
+                                ...win,
+                                windowTab: [
+                                    ...win.windowTab.map(tab => ({
+                                        ...tab,
+                                        isCurrentTab: false
+                                    })),
+                                    newTab
+                                ]
+                            };
+                        })
+                    }
+                };
+            });
 
             return {
                 ...state,
-                runningWindows: state.runningWindows.map(win => {
-                    if (win.hash !== action.payload.windowHash) return win; // ✅ other windows untouched
-
-                    return {
-                        ...win,
-                        windowTab: [
-                            ...win.windowTab.map(tab => ({ ...tab, isCurrentTab: false })),
-                            newTab
-                        ]
-                    };
-                })
+                runningApplication: updatedApps
             };
         }
 
         case "DELETE_TAB": {
+            const targetApp = state.runningApplication.find(app =>
+                app.windowState?.runningWindows.some(
+                    win => win.hash === action.payload.windowHash
+                )
+            );
+
+            if (!targetApp || !targetApp.windowState) return state;
+
+            const ws = targetApp.windowState;
+
+            const updatedApps = state.runningApplication.map(app => {
+                if (app.applicationName !== targetApp.applicationName) {
+                    return app;
+                }
+
+                return {
+                    ...app,
+                    windowState: {
+                        ...ws,
+                        runningWindows: ws.runningWindows.map(win => {
+                            if (win.hash !== action.payload.windowHash) {
+                                return win;
+                            }
+
+                            const tabIndex = win.windowTab.findIndex(
+                                tab => tab.hash === action.payload.tabHash
+                            );
+
+                            const updatedTabs = win.windowTab.filter(
+                                tab => tab.hash !== action.payload.tabHash
+                            );
+
+                            const wasActive =
+                                win.windowTab[tabIndex]?.isCurrentTab;
+
+                            if (wasActive && updatedTabs.length > 0) {
+                                const newActiveIndex = Math.max(0, tabIndex - 1);
+
+                                updatedTabs[newActiveIndex] = {
+                                    ...updatedTabs[newActiveIndex],
+                                    isCurrentTab: true
+                                };
+                            }
+
+                            return {
+                                ...win,
+                                windowTab: updatedTabs
+                            };
+                        })
+                    }
+                };
+            });
+
             return {
                 ...state,
-                runningWindows: state.runningWindows.map(win => {
-                    if (win.hash !== action.payload.windowHash) return win;
-
-                    const tabIndex = win.windowTab.findIndex(
-                        tab => tab.hash === action.payload.tabHash
-                    );
-
-                    const updatedTabs = win.windowTab.filter(
-                        tab => tab.hash !== action.payload.tabHash
-                    );
-
-                    // If the closed tab was active, promote the nearest tab
-                    const wasActive = win.windowTab[tabIndex]?.isCurrentTab;
-                    if (wasActive && updatedTabs.length > 0) {
-                        const newActiveIndex = Math.max(0, tabIndex - 1);
-                        updatedTabs[newActiveIndex] = {
-                            ...updatedTabs[newActiveIndex],
-                            isCurrentTab: true
-                        };
-                    }
-
-                    return { ...win, windowTab: updatedTabs };
-                })
+                runningApplication: updatedApps
             };
         }
 
         case "SWITCH_TAB": {
+            const targetApp = state.runningApplication.find(app =>
+                app.windowState?.runningWindows.some(
+                    win => win.hash === action.payload.windowHash
+                )
+            );
+
+            if (!targetApp || !targetApp.windowState) return state;
+
+            const ws = targetApp.windowState;
+
+            const updatedApps = state.runningApplication.map(app => {
+                if (app.applicationName !== targetApp.applicationName) {
+                    return app;
+                }
+
+                return {
+                    ...app,
+                    windowState: {
+                        ...ws,
+                        runningWindows: ws.runningWindows.map(win => {
+                            if (win.hash !== action.payload.windowHash) {
+                                return win;
+                            }
+
+                            return {
+                                ...win,
+                                windowTab: win.windowTab.map(tab => ({
+                                    ...tab,
+                                    isCurrentTab:
+                                        tab.hash === action.payload.tabHash
+                                }))
+                            };
+                        })
+                    }
+                };
+            });
+
             return {
                 ...state,
-                runningWindows: state.runningWindows.map(win => {
-                    if (win.hash !== action.payload.windowHash) return win;
-                    return {
-                        ...win,
-                        windowTab: win.windowTab.map(tab => ({
-                            ...tab,
-                            isCurrentTab: tab.hash === action.payload.tabHash
-                        }))
-                    };
-                })
+                runningApplication: updatedApps
             };
         }
 
+        case "SWITCH_WINDOW": {
+            const targetApp = state.runningApplication.find(app =>
+                app.windowState?.runningWindows.some(
+                    win => win.hash === action.payload.windowHash
+                )
+            );
 
+            if (!targetApp) return state;
+
+            return {
+                ...state,
+                runningApplication: buildStack(
+                    state.runningApplication,
+                    targetApp.applicationName
+                )
+            };
+        }
+
+        case "BRING_TO_FRONT": {
+            return {
+                ...state,
+                runningApplication: buildStack(
+                    state.runningApplication,
+                    action.payload.app
+                )
+            };
+        }
 
         default:
             return state;
     }
 }
+
