@@ -6,7 +6,7 @@ import {Camera, FlaskConical, Grid3X3, Mic, Plus, Search} from "lucide-react";
 import {useState} from "react";
 
 export const Google = () => {
-    const [focus, setFocused] = useState(false);
+   // const [focus, setFocused] = useState(false);
     const [query, setQuery] = useState("");
 
     return (
@@ -51,8 +51,8 @@ export const Google = () => {
                             type="text"
                             value={query}
                             onChange={e => setQuery(e.target.value)}
-                            onFocus={() => setFocused(true)}
-                            onBlur={() => setFocused(false)}
+                            // onFocus={() => setFocused(true)}
+                            // onBlur={() => setFocused(false)}
                             onMouseDown={e => e.stopPropagation()}
                             placeholder="Ask Google"
                             className="flex-1 w-[60%] h-full
@@ -68,12 +68,6 @@ export const Google = () => {
                                     <button className="text-black hover:text-white transition-colors">
                                         <Camera size={8} />
                                     </button>
-                                    {/*<button className="flex items-center gap-1 text-[0.2rem] */}
-                                    {/*bg-[#1a1a2e] hover:bg-[#1557b0]/30 border border-[#5f6368] text-[#e8eaed]*/}
-                                    {/*text-sm  p-1 rounded-full transition-colors">*/}
-                                    {/*    <Sparkles size={4} className="text-[#8ab4f8]" />*/}
-                                    {/*    AI Mode*/}
-                                    {/*</button>*/}
                                 </>
                             ) : (
                                 <button className="text-black hover:text-white transition-colors">
