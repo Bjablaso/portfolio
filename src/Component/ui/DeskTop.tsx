@@ -27,11 +27,11 @@ export const DeskTop = () => {
                 }}
 
             >
-                <nav className="flex w-full h-full px-1.25  py-0.5 justify-between text-white font-light">
+                <nav className="flex w-full h-full px-1.25 py-0.5 justify-between text-white font-light shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
                     <ManuBar/>
                 </nav>
 
-                <main className="border border-amber-500">
+                <main className=" w-full h-full overflow-hidden">
                         <DeskTopWorkSpace/>
                 </main>
                 <footer className="flex w-full h-full justify-center pt-1.5 ">
