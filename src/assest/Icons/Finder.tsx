@@ -1,12 +1,17 @@
 // @flow
-
 import * as React from "react";
+import {useWindowContext} from "../../Context/useWindowContext.ts";
 
 export const Finder: React.FC = () => {
+    const {openApplication } = useWindowContext();
+
+
     return (
         <div className="flex items-center justify-center object-contain
         rounded-md  hover:opacity-40
-        ">
+        "
+         onClick={()=> openApplication("Finder", 200, 120)}
+        >
 
             <svg
                 className="

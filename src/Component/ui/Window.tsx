@@ -122,7 +122,8 @@
 //                 `}
 //                 onMouseDown={handleMouseDown}
 //             >
-//                 <WindowHeader hashParent={hashNumber} />
+//                 <WindowHeader hashParent={hashNumber} dock={"left"} control={undefined} headerBody={undefined}
+//                               padding={"none"} borderRadius={"none"} />
 //             </div>
 //
 //

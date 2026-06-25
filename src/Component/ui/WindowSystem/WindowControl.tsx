@@ -12,11 +12,17 @@ export const WindowControl: React.FC<WindowControlProps> = ({
                                                             }) => {
     const { windowState, dispatch } = useWindowContext();
 
-    const currentWindow = windowState.runningWindows.find(
-        (win) => win.hash === hashParent
+    const targetApp = windowState.runningApplication.find(app =>
+        app.windowState?.runningWindows.some(win => win.hash === hashParent)
     );
 
+    const currentWindow = targetApp?.windowState?.runningWindows.find(
+        win => win.hash === hashParent
+    );
+    if (!targetApp?.windowState || !currentWindow) return null;
+
     const windowHash = currentWindow?.hash;
+
 
     return (
         <div
@@ -28,9 +34,11 @@ export const WindowControl: React.FC<WindowControlProps> = ({
                 items-center
                 justify-center
                 gap-0.5
+               
             `}
         >
-            {windowState.windowControl.map((control) => {
+
+            {targetApp?.windowState?.windowControl.map((control) => {
                 const Icon = control.icon;
 
                 return (

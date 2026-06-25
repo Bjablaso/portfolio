@@ -1,6 +1,6 @@
 import {useReducer, useRef} from "react";
 import * as React from "react";
-import {initalWindoStructure, windowReducer} from "../Reducer/WindowReducer.ts";
+import {initialWindowStructure, windowReducer} from "../Reducer/WindowReducer.ts";
 import { WindowContext } from "./WindowContext.ts";
 
 interface WindowControlProps {
@@ -8,17 +8,28 @@ interface WindowControlProps {
 }
 
 export const WindowControlContextProvider:React.FC<WindowControlProps> = ({children}) => {
-    const [windowState, dispatch]= useReducer( windowReducer, initalWindoStructure)
+    const [windowState, dispatch]= useReducer( windowReducer,initialWindowStructure )
     const windowRef = useRef<HTMLDivElement | null>(null);
     const parentRef = useRef<HTMLDivElement | null>(null);
-    //const manuBarDirection = "col" | "row";
-  //  const [currentWindowHash, setWindowIdentifierHash ]= useState<number | null>(null)
 
-    // const  windowID = (value: number)=> {
-    //     setWindowIdentifierHash(value)
-    // }
-    //
+    function canCreateWindow(appName: string): boolean {
+        const app = windowState.runningApplication.find(
+            app => app.applicationName === appName
+        );
 
+        if (!app?.windowState) return false;
+
+        return app.windowState.runningWindows.length < app.windowState.maxWindow;
+    }
+
+    function openApplication(appName: string, width: number, height: number) {
+        if (!canCreateWindow(appName)) return;
+
+        dispatch({
+            type: "CREATE_WINDOW",
+            payload: { app: appName, windowWidth: width, windowHeight: height },
+        });
+    }
 
     return(
        <WindowContext.Provider
@@ -28,6 +39,8 @@ export const WindowControlContextProvider:React.FC<WindowControlProps> = ({child
                    dispatch,
                    windowRef,
                    parentRef,
+                   openApplication,
+                   canCreateWindow,
                }
            }
        >
