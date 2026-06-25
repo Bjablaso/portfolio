@@ -6,7 +6,7 @@ import {Camera, FlaskConical, Grid3X3, Mic, Plus, Search} from "lucide-react";
 import {useState} from "react";
 
 export const Google = () => {
-    const [focused, setFocused] = useState(false);
+    const [focus, setFocused] = useState(false);
     const [query, setQuery] = useState("");
 
     return (
