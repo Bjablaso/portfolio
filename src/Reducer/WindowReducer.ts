@@ -241,19 +241,6 @@ export const initialWindowStructure: ApplicationInfo=  {
                     ],
                 },
 
-                // {
-                //     itemName: "Window",
-                //     type: "text",
-                //     isActive: false,
-                //     isSubManu: true,
-                //     dropManuPosition: 610,
-                //     dopItemList: [
-                //         { description: "Minimize" },
-                //         { description: "Zoom" },
-                //         { description: "Close Window" },
-                //         { description: "Bring To Front" },
-                //     ],
-                // },
 
                 {
                     itemName: "Help",

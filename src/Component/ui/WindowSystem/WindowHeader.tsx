@@ -57,7 +57,7 @@ export const WindowHeader: React.FC<WindowHeaderProps> = ({
     );
 
     if (!targetApp?.windowState || !currentWindow) return null;
-  //  const windowHashX = currentWindow?.hash;
+   // const windowHashX = currentWindow?.hash;
 
     const isHorizontalHeader = dock === "top" || dock === "bottom";
 

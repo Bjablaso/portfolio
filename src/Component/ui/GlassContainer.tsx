@@ -77,7 +77,7 @@ export function GlassContainer_two({
   return (
       <div
           className={`
-        relative flex gap-2 rounded-2xl items-center
+        relative flex gap-2 rounded-2xl items-center overscroll-none overflow-hidden
         ${directionStyles[containerDirection]}
        ${border ? 'ring-1 ring-white/20 ring-inset' : ''}
          ${paddingStyles[padding]}

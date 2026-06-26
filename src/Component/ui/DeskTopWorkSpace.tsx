@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import {useMemo, useState} from "react";
 import { useWindowContext } from "../../Context/useWindowContext.ts";
 import { AdaptiveWindow } from "./AdaptiveWindow.tsx";
 import { WindowHeader } from "./WindowSystem/WindowHeader.tsx";
@@ -7,10 +7,13 @@ import { Google } from "./WindowSystem/Google.tsx";
 import type {RunningWindow} from "../../Interfaces/WindowIteface.ts";
 import {WindowControl} from "./WindowSystem/WindowControl.tsx";
 import {EdgeTab} from "./WindowSystem/EdgeTab.tsx";
+import {FinderControlBody} from "./WindowSystem/FinderControlBody.tsx";
+import {FinderBody} from "./WindowSystem/FinderBody.tsx";
 
 export const DeskTopWorkSpace = () => {
     const { windowState, openApplication } = useWindowContext();
     const googleBody = useMemo(() => <Google />, []);
+    const [body, setBody] = useState<string>('');
 
     /////////////////////////// Flat out array -. only keep active window/////////////
 
@@ -22,6 +25,10 @@ export const DeskTopWorkSpace = () => {
                 window,
             }))
     );
+
+    function somefunction(name: string) {
+        setBody(name);
+    }
 
     const renderWindow = (window: RunningWindow) =>{
         switch (window.app) {
@@ -74,7 +81,7 @@ export const DeskTopWorkSpace = () => {
                         hashNumber={window.hash}
                         // appName={app.applicationName}
                         dock="left"
-                        headerSize="lg"
+                        headerSize="xl"
                         windowHeight={window.windowHeight}
                         windowWidth={window.windowWidth}
                         // zIndex={app.zIndex}
@@ -93,11 +100,13 @@ export const DeskTopWorkSpace = () => {
                                             direction="row"
                                         />
                                 }
-                                headerBody={undefined}
+                                headerBody={
+                                <FinderControlBody onChange={somefunction}/>
+                                }
                                 padding="md"
                             />
                         }
-                        bodyComponent={null}
+                        bodyComponent={<FinderBody name={body} />}
                     />
                 )
             default:

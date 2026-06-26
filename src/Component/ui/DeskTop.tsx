@@ -34,7 +34,7 @@ export const DeskTop = () => {
                 <main className=" w-full h-full overflow-hidden">
                         <DeskTopWorkSpace/>
                 </main>
-                <footer className="flex w-full h-full justify-center pt-1.5 ">
+                <footer className="flex w-full h-full justify-center pt-1.5  ">
                     <GlassContainer_two
                         padding="sm"
                         className="bottom-1 items-center"
