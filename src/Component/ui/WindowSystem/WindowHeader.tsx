@@ -46,7 +46,7 @@ export const WindowHeader: React.FC<WindowHeaderProps> = ({
                                                               innerBgColor = "#222222",
                                                               borderRadius = "none",
                                                           }) => {
-    const { windowState, dispatch } = useWindowContext();
+    const { windowState } = useWindowContext();
 
     const targetApp = windowState.runningApplication.find(app =>
         app.windowState?.runningWindows.some(win => win.hash === hashParent)
@@ -57,7 +57,7 @@ export const WindowHeader: React.FC<WindowHeaderProps> = ({
     );
 
     if (!targetApp?.windowState || !currentWindow) return null;
-    const windowHashX = currentWindow?.hash;
+   // const windowHashX = currentWindow?.hash;
 
     const isHorizontalHeader = dock === "top" || dock === "bottom";
 

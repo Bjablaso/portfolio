@@ -6,6 +6,8 @@ import './style/desktop.css'
 import './style/landingpage.css'
 import App from './App.tsx'
 import loadModel from "./api/modelLoader.ts";
+import './style/modelHTMLTheme.css'
+
 loadModel();
 
 createRoot(document.getElementById('root')!).render(

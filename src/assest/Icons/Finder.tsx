@@ -10,7 +10,7 @@ export const Finder: React.FC = () => {
         <div className="flex items-center justify-center object-contain
         rounded-md  hover:opacity-40
         "
-         onClick={()=> openApplication("Finder", 200, 120)}
+         onClick={()=> openApplication("Finder", 220, 140)}
         >
 
             <svg
