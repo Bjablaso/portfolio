@@ -9,6 +9,7 @@ import {WindowControl} from "./WindowSystem/WindowControl.tsx";
 import {EdgeTab} from "./WindowSystem/EdgeTab.tsx";
 import {FinderControlBody} from "./WindowSystem/FinderControlBody.tsx";
 import {FinderBody} from "./WindowSystem/FinderBody.tsx";
+import {SearchBarBody} from "./WindowSystem/SearchBarBody.tsx";
 
 export const DeskTopWorkSpace = () => {
     const { windowState, openApplication } = useWindowContext();
@@ -41,7 +42,7 @@ export const DeskTopWorkSpace = () => {
                         hashNumber={window.hash}
                         // appName={app.applicationName}
                         dock="top"
-                        headerSize="sm"
+                        headerSize="lg"
                         windowHeight={window.windowHeight}
                         windowWidth={window.windowWidth}
                         // zIndex={app.zIndex}
@@ -50,6 +51,8 @@ export const DeskTopWorkSpace = () => {
                             <WindowHeader
                                 hashParent={window.hash}
                                 dock="top"
+                                // outerBgColor="#373a3c"
+                                // innerBgColor="#111111"
                                 borderRadius="none"
                                 control={
                                     <div className="flex w-full h-full items-center justify-center text-white p-1 gap-0.5 rounded-sm min-w-[40px] min-h-[16px]">
@@ -65,10 +68,15 @@ export const DeskTopWorkSpace = () => {
                                     dock={"top"}
                                 />
                                 }
+                                searchBarBody={
+                                    <SearchBarBody/>
+                                }
                                 padding="none"
                             />
                         }
                         bodyComponent={googleBody}
+
+
                     />
                 );
 
@@ -91,8 +99,8 @@ export const DeskTopWorkSpace = () => {
                             <WindowHeader
                                 hashParent={window.hash}
                                 dock="left"
-                                outerBgColor="#373a3c"
-                                innerBgColor="#111111"
+                                // outerBgColor="#373a3c"
+                                // innerBgColor="#111111"
                                 borderRadius="sm"
                                 control={
                                         <WindowControl
@@ -103,6 +111,10 @@ export const DeskTopWorkSpace = () => {
                                 headerBody={
                                 <FinderControlBody onChange={somefunction}/>
                                 }
+                                searchBarBody={
+                                null
+                                }
+
                                 padding="md"
                             />
                         }

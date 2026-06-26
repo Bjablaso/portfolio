@@ -182,7 +182,7 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
         >
             {dock === "top" || dock === "left" ? (
                 <>
-                    <div className=" flex  w-full h-full gap-0.5" onMouseDown={handleMouseDown}>
+                    <div className=" flex  w-full h-full gap-0.5 " onMouseDown={handleMouseDown}>
                         {headerComponent}
                     </div>
                     <div className="bg-[#373a3c] border-t border-t-white/60 border-t-[0.2px] ">
@@ -196,7 +196,7 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
                     <div className=" flex  w-full h-full gap-0.5" onMouseDown={handleMouseDown}>
                         {headerComponent}
                     </div>
-                    <div className="bg-[#373a3c] border-t border-t-white/60 border-t-[0.2px]">
+                    <div className=" border-t border-t-white/60 border-t-[0.2px] window-innerbody-color">
                         {bodyComponent}
                     </div>
                 </>

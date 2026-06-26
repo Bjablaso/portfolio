@@ -28,9 +28,10 @@ export interface WindowHeaderProps {
     dock: WindowHeaderPosition;
     control: React.ReactNode | null;
     headerBody: React.ReactNode | null;
+    searchBarBody?: React.ReactNode | null;
     padding: Padding;
-    outerBgColor?: string;
-    innerBgColor?: string;
+   // outerBgColor?: string;
+  //  innerBgColor?: string;
     borderRadius: BorderRadius
 
 }
@@ -41,9 +42,9 @@ export const WindowHeader: React.FC<WindowHeaderProps> = ({
                                                               dock,
                                                               control,
                                                               headerBody,
+    searchBarBody,
                                                               padding = "none",
-                                                              outerBgColor = "#111111",
-                                                              innerBgColor = "#222222",
+                                                             // innerBgColor = "#222222",
                                                               borderRadius = "none",
                                                           }) => {
     const { windowState } = useWindowContext();
@@ -83,17 +84,18 @@ export const WindowHeader: React.FC<WindowHeaderProps> = ({
 
     return (
         <div
-            className={`flex ${headerDirection} 
+            className={`flex flex-col
             w-full 
             h-full 
             overflow-hidden 
             ${paddingSize}
             flex items-center justify-center
+            window-outerbody-color
            `
         }
-            style={{
-                backgroundColor: outerBgColor,
-            }}
+            // style={{
+            //     backgroundColor: outerBgColor,
+            // }}
         >
             <div
                 className={`
@@ -102,25 +104,33 @@ export const WindowHeader: React.FC<WindowHeaderProps> = ({
                     overflow-hidden
               
                     items-center justify-center
+                   
                   
                     ${radiusSize}
                 `}
-                style={{
-                    backgroundColor: innerBgColor,
-                }}
+                // style={{
+                //     backgroundColor: innerBgColor,
+                // }}
             >
-                <div className={`${controlSize} top-0.5`}>
+                <div className={`${controlSize} top-0.5 `}>
                          {control}
                 </div>
 
-                <div className={`${bodySize} overflow-hidden`}>
+                <div className={`${bodySize} overflow-hidden `}>
                     {headerBody}
                 </div>
 
                 <div className={`${extraSize} flex items-center justify-center`}>
-                    {/* add button/search/extra */}
                 </div>
             </div>
+            {searchBarBody ? (
+                <div className={` flex ${headerDirection}
+                    w-full h-full
+                    overflow-hidden`}>
+                    {searchBarBody}
+                </div>
+            ) : null}
+
 
         </div>
     );

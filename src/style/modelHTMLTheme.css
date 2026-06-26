@@ -35,6 +35,8 @@
     --window-radius-xl: 0.5rem;
     --window-radius-xxl: 0.75rem;
     --window-radius-xxxl: 1rem;
+    --color-window-outerbody: #111111;
+    --color-window-innerbody: #373a3c;
 }
 
 
@@ -79,3 +81,5 @@
 .window-rounded-xl { border-radius: var(--window-radius-xl); }
 .window-rounded-xxl { border-radius: var(--window-radius-xxl); }
 .window-rounded-xxxl { border-radius: var(--window-radius-xxxl); }
+.window-innerbody-color { background-color: var(--color-window-innerbody);}
+.window-outerbody-color { background-color: var(--color-window-outerbody); }

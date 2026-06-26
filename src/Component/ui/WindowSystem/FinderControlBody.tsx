@@ -61,7 +61,7 @@ export const FinderControlBody = ({
     const favoriteItems = data.filter(item => item.id >= FAVORITES_FROM_ID);
 
     return (
-        <div className="w-full h-full flex flex-col window-gap-sm window-p-md">
+        <div className="w-full h-full flex flex-col window-gap-sm window-p-md rounded-sm border-1 border-gray-400">
             <ul className="flex flex-col window-gap-sm">
                 {topItems.map(item => (
                     <FinderRow key={item.id} item={item} onSelect={onSelect} />
