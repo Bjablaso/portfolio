@@ -2,7 +2,7 @@ import {Camera, FlaskConical, Grid3X3, Mic, Plus, Search} from "lucide-react";
 import {useState} from "react";
 
 export const Google = () => {
-    const [focused, setFocused] = useState(false);
+   // const [focus, setFocused] = useState(false);
     const [query, setQuery] = useState("");
 
     return (
@@ -41,8 +41,8 @@ export const Google = () => {
                             type="text"
                             value={query}
                             onChange={e => setQuery(e.target.value)}
-                            onFocus={() => setFocused(true)}
-                            onBlur={() => setFocused(false)}
+                            // onFocus={() => setFocused(true)}
+                            // onBlur={() => setFocused(false)}
                             onMouseDown={e => e.stopPropagation()}
                             placeholder="Ask Google"
                             className="window-text-md flex-1 w-[60%] h-full bg-transparent outline-none text-black placeholder-[#9aa0a6] caret-black"
