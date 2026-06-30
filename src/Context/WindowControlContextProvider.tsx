@@ -2,6 +2,7 @@ import {useReducer, useRef} from "react";
 import * as React from "react";
 import {initialWindowStructure, windowReducer} from "../Reducer/WindowReducer.ts";
 import { WindowContext } from "./WindowContext.ts";
+import type {SystemApplication} from "../Interfaces/WindowIteface.ts";
 
 interface WindowControlProps {
     children: React.ReactNode;
@@ -31,6 +32,17 @@ export const WindowControlContextProvider:React.FC<WindowControlProps> = ({child
         });
     }
 
+
+    function systemApplications():SystemApplication[] {
+        const someData = windowState.runningApplication.map(app => ({
+            applicationName: app.applicationName,
+            iconUrl: app.iconUrl,
+            minWidth: app.minWindowWidth,
+            minHeight: app.minWindowHeight,
+        }));
+        return someData
+    }
+
     return(
        <WindowContext.Provider
            value={
@@ -41,6 +53,7 @@ export const WindowControlContextProvider:React.FC<WindowControlProps> = ({child
                    parentRef,
                    openApplication,
                    canCreateWindow,
+                   systemApplications
                }
            }
        >
