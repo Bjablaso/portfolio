@@ -1,12 +1,7 @@
 import {X, Minus, Expand, Plus} from "lucide-react";
 import type {ApplicationInfo, ComputerApplication, WindowAction} from "../Interfaces/WindowIteface.ts";
-// import {
-//     IoBatteryFull,
-//     IoSearch,
-// } from "react-icons/io5";
 import {FaWifi, FaApple} from "react-icons/fa";
 import {IoBatteryFull, IoSearch} from "react-icons/io5";
-
 
 
 export const initialWindowStructure: ApplicationInfo=  {
@@ -18,7 +13,7 @@ export const initialWindowStructure: ApplicationInfo=  {
             isActive: true,
             isManu: true,
             isBackground: true,
-            zIndex: 0,          // ← always base
+            zIndex: 0, // ← always base
             applicationManu: [
                 {
                     itemName: "Preview",
@@ -26,13 +21,6 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isActive: false,
                     isSubManu: false,
                     dropManuPosition: 60,
-                    // dopItemList: [
-                    //     { description: "New Window" },
-                    //     { description: "New Tab" },
-                    //     { description: "Close Window" },
-                    //     { description: "Close Tab" },
-                    //     { description: "Print..." },
-                    // ],
                 },
                 {
                     itemName: "File",
@@ -41,10 +29,10 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 60,
                     dopItemList: [
-                        { description: "New Window" },
-                        { description: "Open..." },
-                        { description: "Close Window" },
-                        { description: "Save" },
+                        {description: "New Window"},
+                        {description: "Open..."},
+                        {description: "Close Window"},
+                        {description: "Save"},
                     ]
                 },
                 {
@@ -54,12 +42,12 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 90,
                     dopItemList: [
-                        { description: "Undo" },
-                        { description: "Redo" },
-                        { description: "Cut" },
-                        { description: "Copy" },
-                        { description: "Paste" },
-                        { description: "Select All" },
+                        {description: "Undo"},
+                        {description: "Redo"},
+                        {description: "Cut"},
+                        {description: "Copy"},
+                        {description: "Paste"},
+                        {description: "Select All"},
                     ]
                 },
                 {
@@ -77,9 +65,9 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 150,
                     dopItemList: [
-                        { description: "Minimize" },
-                        { description: "Zoom" },
-                        { description: "Bring All to Front" },
+                        {description: "Minimize"},
+                        {description: "Zoom"},
+                        {description: "Bring All to Front"},
                     ]
                 },
                 {
@@ -89,7 +77,7 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 195,
                     dopItemList: [
-                        { description: "Preview Help" },
+                        {description: "Preview Help"},
                     ]
                 },
             ],
@@ -100,34 +88,34 @@ export const initialWindowStructure: ApplicationInfo=  {
                     type: "icon",
                     isActive: false,
                     icon: IoBatteryFull,
-
                 },
                 {
                     itemName: "Wifi",
                     type: "icon",
                     isActive: false,
                     icon: FaWifi,
-
                 },
                 {
                     itemName: "Search",
                     type: "icon",
                     isActive: false,
                     icon: IoSearch,
-
                 }
-            ]
+            ],
+            iconUrl: "",
+            minWindowWidth: 0,
+            minWindowHeight: 0
         },
         {
-            applicationName: "Edge",
+            applicationName: "Chrome",
             type: "text",
             isActive: false,
             isManu: true,
             isBackground: false,
-            zIndex: 1,          // ← starts above Preview
+            zIndex: 1, // ← starts above Preview
             applicationManu: [
                 {
-                    itemName: "Edge",
+                    itemName: "Chrome",
                     type: "text",
                     isActive: false,
                     isSubManu: false,
@@ -147,11 +135,11 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 60,
                     dopItemList: [
-                        { description: "New Window" },
-                        { description: "New Tab" },
-                        { description: "Close Window" },
-                        { description: "Close Tab" },
-                        { description: "Print..." },
+                        {description: "New Window"},
+                        {description: "New Tab"},
+                        {description: "Close Window"},
+                        {description: "Close Tab"},
+                        {description: "Print..."},
                     ],
                 },
 
@@ -162,11 +150,11 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 120,
                     dopItemList: [
-                        { description: "Undo" },
-                        { description: "Redo" },
-                        { description: "Cut" },
-                        { description: "Copy" },
-                        { description: "Paste" },
+                        {description: "Undo"},
+                        {description: "Redo"},
+                        {description: "Cut"},
+                        {description: "Copy"},
+                        {description: "Paste"},
                     ],
                 },
 
@@ -177,11 +165,11 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 180,
                     dopItemList: [
-                        { description: "Zoom In" },
-                        { description: "Zoom Out" },
-                        { description: "Actual Size" },
-                        { description: "Full Screen" },
-                        { description: "Show Toolbar" },
+                        {description: "Zoom In"},
+                        {description: "Zoom Out"},
+                        {description: "Actual Size"},
+                        {description: "Full Screen"},
+                        {description: "Show Toolbar"},
                     ],
                 },
 
@@ -192,39 +180,13 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 260,
                     dopItemList: [
-                        { description: "Home" },
-                        { description: "Back" },
-                        { description: "Forward" },
-                        { description: "Recently Closed" },
-                        { description: "Manage History" },
+                        {description: "Home"},
+                        {description: "Back"},
+                        {description: "Forward"},
+                        {description: "Recently Closed"},
+                        {description: "Manage History"},
                     ],
                 },
-
-                // {
-                //     itemName: "Favorites",
-                //     type: "text",
-                //     isActive: false,
-                //     isSubManu: true,
-                //     dropManuPosition: 350,
-                //     dopItemList: [
-                //         { description: "Add Favorite" },
-                //         { description: "Show Favorites" },
-                //         { description: "Manage Favorites" },
-                //     ],
-                // },
-
-                // {
-                //     itemName: "Profiles",
-                //     type: "text",
-                //     isActive: false,
-                //     isSubManu: true,
-                //     dropManuPosition: 450,
-                //     dopItemList: [
-                //         { description: "Sign In" },
-                //         { description: "Guest Profile" },
-                //         { description: "Profile Settings" },
-                //     ],
-                // },
 
                 {
                     itemName: "Tab",
@@ -233,11 +195,11 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 540,
                     dopItemList: [
-                        { description: "New Tab" },
-                        { description: "Next Tab" },
-                        { description: "Previous Tab" },
-                        { description: "Duplicate Tab" },
-                        { description: "Close Tab" },
+                        {description: "New Tab"},
+                        {description: "Next Tab"},
+                        {description: "Previous Tab"},
+                        {description: "Duplicate Tab"},
+                        {description: "Close Tab"},
                     ],
                 },
 
@@ -249,10 +211,10 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 700,
                     dopItemList: [
-                        { description: "Search Help" },
-                        { description: "Edge Help" },
-                        { description: "Update Edge" },
-                        { description: "Send Feedback" },
+                        {description: "Search Help"},
+                        {description: "Chrome Help"},
+                        {description: "Update Chrome"},
+                        {description: "Send Feedback"},
                     ],
                 },
             ],
@@ -262,19 +224,19 @@ export const initialWindowStructure: ApplicationInfo=  {
                         id: 1,
                         description: "exit",
                         icon: X,
-                        color: "#ff5f57"  // macOS red
+                        color: "#ff5f57" // macOS red
                     },
                     {
                         id: 2,
                         description: "minimize",
                         icon: Minus,
-                        color: "#febc2e"  // macOS yellow
+                        color: "#febc2e" // macOS yellow
                     },
                     {
                         id: 0,
                         description: "expand",
                         icon: Expand,
-                        color: "#28c840"  // macOS green
+                        color: "#28c840" // macOS green
                     }
                 ],
                 tabControl: {
@@ -293,23 +255,23 @@ export const initialWindowStructure: ApplicationInfo=  {
                     type: "icon",
                     isActive: false,
                     icon: IoBatteryFull,
-
                 },
                 {
                     itemName: "Wifi",
                     type: "icon",
                     isActive: false,
                     icon: FaWifi,
-
                 },
                 {
                     itemName: "Search",
                     type: "icon",
                     isActive: false,
                     icon: IoSearch,
-
                 }
-            ]
+            ],
+            iconUrl: "/assets/edge-svgrepo-com.svg",
+            minWindowWidth: 280,
+            minWindowHeight: 180
         },
         {
             applicationName: "Finder",
@@ -317,7 +279,7 @@ export const initialWindowStructure: ApplicationInfo=  {
             isActive: false,
             isManu: true,
             isBackground: true,
-            zIndex: 1,
+            zIndex: 2,
             applicationManu: [
                 {
                     itemName: "File",
@@ -326,11 +288,11 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 60,
                     dopItemList: [
-                        { description: "New Finder Window" },
-                        { description: "New Tab" },
-                        { description: "Open" },
-                        { description: "Close Window" },
-                        { description: "Find" },
+                        {description: "New Finder Window"},
+                        {description: "New Tab"},
+                        {description: "Open"},
+                        {description: "Close Window"},
+                        {description: "Find"},
                     ],
                 },
                 {
@@ -340,11 +302,11 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 120,
                     dopItemList: [
-                        { description: "Undo" },
-                        { description: "Redo" },
-                        { description: "Cut" },
-                        { description: "Copy" },
-                        { description: "Paste" },
+                        {description: "Undo"},
+                        {description: "Redo"},
+                        {description: "Cut"},
+                        {description: "Copy"},
+                        {description: "Paste"},
                     ],
                 },
                 {
@@ -354,11 +316,11 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 180,
                     dopItemList: [
-                        { description: "as Icons" },
-                        { description: "as List" },
-                        { description: "as Columns" },
-                        { description: "Show Sidebar" },
-                        { description: "Enter Full Screen" },
+                        {description: "as Icons"},
+                        {description: "as List"},
+                        {description: "as Columns"},
+                        {description: "Show Sidebar"},
+                        {description: "Enter Full Screen"},
                     ],
                 },
                 {
@@ -368,11 +330,11 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 240,
                     dopItemList: [
-                        { description: "Recents" },
-                        { description: "Documents" },
-                        { description: "Desktop" },
-                        { description: "Downloads" },
-                        { description: "Applications" },
+                        {description: "Recents"},
+                        {description: "Documents"},
+                        {description: "Desktop"},
+                        {description: "Downloads"},
+                        {description: "Applications"},
                     ],
                 },
                 {
@@ -382,11 +344,11 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 300,
                     dopItemList: [
-                        { description: "Minimize" },
-                        { description: "Zoom" },
-                        { description: "Cycle Through Windows" },
-                        { description: "Bring All to Front" },
-                        { description: "Recents" },
+                        {description: "Minimize"},
+                        {description: "Zoom"},
+                        {description: "Cycle Through Windows"},
+                        {description: "Bring All to Front"},
+                        {description: "Recents"},
                     ],
                 },
                 {
@@ -396,9 +358,9 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isSubManu: true,
                     dropManuPosition: 370,
                     dopItemList: [
-                        { description: "Search Help" },
-                        { description: "Mac User Guide" },
-                        { description: "Tips for Your Mac" },
+                        {description: "Search Help"},
+                        {description: "Mac User Guide"},
+                        {description: "Tips for Your Mac"},
                     ],
                 },
             ],
@@ -453,6 +415,9 @@ export const initialWindowStructure: ApplicationInfo=  {
                     icon: IoSearch,
                 },
             ],
+            iconUrl: "/assets/finder-svgrepo-com.svg",
+            minWindowWidth: 180,
+            minWindowHeight: 100
         }
     ]
 
