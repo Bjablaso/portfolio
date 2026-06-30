@@ -10,8 +10,14 @@ export interface ApplicationInfo{
     runningApplication: ComputerApplication[];
 }
 
+// interface DocumentList{
+//     icon?: LucideIcon | SVGElement | ImageData | null;
+//     name: string;
+// }
+
 export interface ComputerApplication{
     applicationName: string;
+    iconUrl: string ;
     type: "text" | "icon";
     isActive: boolean;
     // isDefault: boolean;
@@ -21,6 +27,8 @@ export interface ComputerApplication{
     manuIcon: ManuBarIcon[]
     zIndex: number;        // ← stack position
     isBackground: boolean; // ← true when sent behind
+    minWindowWidth: number;
+    minWindowHeight: number;
 }
 //////////////////
 
@@ -70,6 +78,8 @@ export interface WindowContextType {
 
     openApplication: (appName: string, windowWidth: number, windowHeight: number) => void;
     canCreateWindow: (appName: string ) => boolean;
+
+    systemApplications: () => SystemApplication[];
 }
 export interface WindowControlItem {
     id: number;
@@ -118,4 +128,9 @@ export type WindowAction =
     | { type: "BRING_TO_FRONT", payload: { app: string } }
 
 
-
+export interface SystemApplication {
+    applicationName: string;
+    iconUrl: string;
+    minWidth: number;
+    minHeight: number;
+}
