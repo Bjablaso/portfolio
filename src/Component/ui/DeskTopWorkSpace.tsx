@@ -33,7 +33,7 @@ export const DeskTopWorkSpace = () => {
 
     const renderWindow = (window: RunningWindow) =>{
         switch (window.app) {
-            case "Edge":
+            case "Chrome":
                 return (
                     <AdaptiveWindow
                         key={window.hash}
@@ -136,7 +136,7 @@ export const DeskTopWorkSpace = () => {
                     src={Story}
                     alt="MyStory logo"
                     className="w-6 h-4 object-contain hover:opacity-70 cursor-pointer"
-                    onClick={()=> openApplication("Edge", 280, 180)}
+                    onClick={()=> openApplication("Chrome", 280, 180)}
                 />
 
                 <span className="font-bold text-white leading-none mt-1 text-[0.4rem]">
