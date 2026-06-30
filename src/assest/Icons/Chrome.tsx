@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useWindowContext } from "../../Context/useWindowContext.ts";
 
-export const Edge: React.FC = () => {
+export const Chrome: React.FC = () => {
     const { openApplication } = useWindowContext();
 
     return (
