@@ -28,10 +28,10 @@ const FinderRow = ({ item, onSelect }: { item: FinderControlData; onSelect: (id:
             }`
             }>
             <Icon
-                size="var(--window-icon-md)"
+                size="var(--window-icon-sm)"
                 className={item.active ? 'text-white' : 'text-[#e8eaed]'}
             />
-            <span className="window-text-md">{item.name}</span>
+            <span className="window-text-sm">{item.name}</span>
         </li>
     );
 };
