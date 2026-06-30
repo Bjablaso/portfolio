@@ -8,12 +8,12 @@ export const Edge: React.FC = () => {
     return (
         <div
             className="flex items-center justify-center object-contain rounded-md hover:opacity-40 cursor-pointer"
-            onClick={()=> openApplication("Edge", 280, 180)}
+            onClick={()=> openApplication("Chrome", 280, 180)}
         >
             <img
                 className="h-4"
                 src="/assets/edge-svgrepo-com.svg"
-                alt="Edge Icon"
+                alt="Chrome Icon"
             />
         </div>
     );
