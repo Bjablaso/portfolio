@@ -8,7 +8,8 @@ export const Chrome: React.FC = () => {
     return (
         <div
             className="flex items-center justify-center object-contain rounded-md hover:opacity-40 cursor-pointer"
-            onClick={()=> openApplication("Chrome", 280, 180)}
+            // Chrome dock icon
+            onClick={() => openApplication("Chrome", 340, 220, "google")}
         >
             <img
                 className="h-4"
