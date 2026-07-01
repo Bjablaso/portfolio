@@ -26,7 +26,7 @@ const MonitorScreen = memo(({ rotation, position, modelMonitorRef,  isInteractiv
             sprite={false}
             position={position}
             rotation={rotation}
-            distanceFactor={5}
+            distanceFactor={5.2}
             zIndexRange={[100, 0]}
              occlude={[modelMonitorRef]}
             pointerEvents={isInteractive? 'auto' : 'none'}
@@ -83,7 +83,7 @@ export const Model: React.FC<ModelProps> = ({ onMonitorClick, cameraMode }) => {
 
     return (
         <Bounds fit={false} clip observe={false} margin={1.8}>
-            <group position={[160, 0, 120]} scale={12} ref={refModel}>
+            <group position={[160, 0, 150]} scale={15} ref={refModel}>
                 <group ref={monitorrRef} onClick={handleMonitorGroupClick}>
 
                     <group>
