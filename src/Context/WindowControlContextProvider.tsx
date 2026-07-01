@@ -2,7 +2,7 @@ import {useReducer, useRef} from "react";
 import * as React from "react";
 import {initialWindowStructure, windowReducer} from "../Reducer/WindowReducer.ts";
 import { WindowContext } from "./WindowContext.ts";
-import type {SystemApplication} from "../Interfaces/WindowIteface.ts";
+import type {ChromePage, SystemApplication} from "../Interfaces/WindowIteface.ts";
 
 interface WindowControlProps {
     children: React.ReactNode;
@@ -23,12 +23,30 @@ export const WindowControlContextProvider:React.FC<WindowControlProps> = ({child
         return app.windowState.runningWindows.length < app.windowState.maxWindow;
     }
 
-    function openApplication(appName: string, width: number, height: number) {
+    // function openApplication(appName: string, width: number, height: number) {
+    //     if (!canCreateWindow(appName)) return;
+    //
+    //     dispatch({
+    //         type: "CREATE_WINDOW",
+    //         payload: { app: appName, windowWidth: width, windowHeight: height },
+    //     });
+    // }
+    function openApplication(
+        appName: string,
+        width: number,
+        height: number,
+        chromePage: ChromePage = null
+    ) {
         if (!canCreateWindow(appName)) return;
 
         dispatch({
             type: "CREATE_WINDOW",
-            payload: { app: appName, windowWidth: width, windowHeight: height },
+            payload: {
+                app: appName,
+                windowWidth: width,
+                windowHeight: height,
+                chromePage,
+            },
         });
     }
 
