@@ -479,6 +479,26 @@ export function windowReducer(
 
             if (currentWindows.length >= ws.maxWindow) return state;
 
+            // const newWindow = {
+            //     hash: Date.now() + Math.floor(Math.random() * 100000),
+            //     app: action.payload.app,
+            //     title: action.payload.app,
+            //     isRunning: true,
+            //     isClosed: false,
+            //     initialSizeX: randomX(),
+            //     initialSizeY: randomY(),
+            //     windowTab: [
+            //         {
+            //             hash: Date.now() + Math.floor(Math.random() * 100000),
+            //             isRunning: true,
+            //             isCurrentTab: true,
+            //             title: "Initial"
+            //         }
+            //     ],
+            //     current: true,
+            //     windowHeight: action.payload.windowHeight,
+            //     windowWidth: action.payload.windowWidth
+            // };
             const newWindow = {
                 hash: Date.now() + Math.floor(Math.random() * 100000),
                 app: action.payload.app,
@@ -492,12 +512,16 @@ export function windowReducer(
                         hash: Date.now() + Math.floor(Math.random() * 100000),
                         isRunning: true,
                         isCurrentTab: true,
-                        title: "Initial"
-                    }
+                        title: "Initial",
+                    },
                 ],
                 current: true,
                 windowHeight: action.payload.windowHeight,
-                windowWidth: action.payload.windowWidth
+                windowWidth: action.payload.windowWidth,
+                chromePage:
+                    action.payload.app === "Chrome"
+                        ? action.payload.chromePage ?? "google"
+                        : null,
             };
 
             const updatedApps = state.runningApplication.map(app => {
