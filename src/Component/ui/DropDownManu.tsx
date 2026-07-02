@@ -2,8 +2,8 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 
 import { GlassContainer_two } from "./GlassContainer.tsx";
-import type {dropManuItems, RunningWindow} from "../../Interfaces/WindowIteface.ts";
-import {useWindowContext} from "../../Context/useWindowContext.ts";
+import type {dropManuItems} from "../../Interfaces/WindowIteface.ts";
+//import {useWindowContext} from "../../Context/useWindowContext.ts";
 
 interface DropDownManuProps {
     dropItems?: dropManuItems[];
