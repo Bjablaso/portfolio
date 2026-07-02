@@ -13,7 +13,7 @@ export const Chrome: React.FC = () => {
         >
             <img
                 className="h-4"
-                src="/assets/edge-svgrepo-com.svg"
+                src="/assets/chrome.svg"
                 alt="Chrome Icon"
             />
         </div>

@@ -34,12 +34,12 @@ interface AdaptiveWindowProps {
     boundaryRef: React.RefObject<HTMLDivElement | null>;
 }
 
-interface Rect {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-}
+// interface Rect {
+//     x: number;
+//     y: number;
+//     width: number;
+//     height: number;
+// }
 
 /**
  * Returns the usable size of the boundary element in its own local
