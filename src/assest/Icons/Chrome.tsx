@@ -1,8 +1,9 @@
 
-import * as React from "react";
+
 import { useWindowContext } from "../../Context/useWindowContext.ts";
 
-export const Chrome: React.FC = () => {
+
+export const Chrome = ({size}: {size: string}) => {
     const { openApplication } = useWindowContext();
 
     return (
@@ -12,10 +13,13 @@ export const Chrome: React.FC = () => {
             onClick={() => openApplication("Chrome", 340, 220, "google")}
         >
             <img
-                className="h-4"
+                className={`${size}`}
                 src="/assets/chrome.svg"
                 alt="Chrome Icon"
             />
         </div>
     );
 };
+//"h-4"
+
+//{item.title}

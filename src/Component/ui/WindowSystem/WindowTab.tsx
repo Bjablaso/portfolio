@@ -1,6 +1,7 @@
 import * as React from "react";
 import {useWindowContext} from "../../../Context/useWindowContext.ts";
 import type {RunningTab} from "../../../Interfaces/WindowIteface.ts";
+import {Chrome} from "../../../assest/Icons/Chrome.tsx";
 
 
 interface WindowTabProps {
@@ -11,6 +12,7 @@ interface WindowTabProps {
 
 export const WindowTab: React.FC<WindowTabProps> = ({background, hashParent, item}) => {
     const {windowState, dispatch} = useWindowContext();
+
     const targetApp = windowState.runningApplication.find(app =>
         app.windowState?.runningWindows.some(win => win.hash === hashParent)
     );
@@ -21,6 +23,10 @@ export const WindowTab: React.FC<WindowTabProps> = ({background, hashParent, ite
 
     if (!targetApp?.windowState || !currentWindow) return null;
 
+
+    // useEffect(() => {
+    //
+    // }, []);
 
     function MinusIcon() {
         const Icon = targetApp?.windowState?.tabControl.iconMinus;
@@ -43,7 +49,7 @@ export const WindowTab: React.FC<WindowTabProps> = ({background, hashParent, ite
 
     return (
         <div
-            className="grid grid-cols-[80%_20%] h-full items-center rounded-t-sm min-w-10 relative top-0.5 p-0.5 cursor-pointer"
+            className="grid grid-cols-[80%_20%] h-full items-center rounded-t-sm min-w-10 relative top-0.5 p-1 cursor-pointer"
             style={{backgroundColor: background}}
             onClick={() => {
 
@@ -53,7 +59,16 @@ export const WindowTab: React.FC<WindowTabProps> = ({background, hashParent, ite
                 });
             }}
         >
-            <div className="text-white text-[0.2rem] truncate">{item.title}</div>
+            <div className="flex flex-row gap-1 text-white text-[0.2rem] truncate">
+                <div>
+                    <Chrome size="size-icon-sm"/>
+                </div>
+
+                <div>
+                    {item.title}
+                </div>
+            </div>
+
             <div className="text-white hover:opacity-70 ">
                 {MinusIcon()}
             </div>

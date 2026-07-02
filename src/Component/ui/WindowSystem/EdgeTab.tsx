@@ -38,7 +38,7 @@ export const EdgeTab: React.FC<EdgeTabProps> = ({
         dispatch({
             type: "CREATE_TAB",
             payload: {
-                title: "newTab",
+                title: "New Tab",
                 windowHash: hashParent,
             },
         });
@@ -56,7 +56,7 @@ export const EdgeTab: React.FC<EdgeTabProps> = ({
                     gap-1
                 `}
             >
-                {currentWindow.windowTab.map(item => {
+                {currentWindow.windowTab.map((item, index) => {
                     if (!item.isRunning) return null;
 
                     const background = item.isCurrentTab
@@ -79,7 +79,7 @@ export const EdgeTab: React.FC<EdgeTabProps> = ({
                                 hashParent={hashParent}
                             />
 
-                            {item.isCurrentTab && (
+                            {index == currentWindow.windowTab.length -1 && (
                                 <div className="flex w-full h-full items-center justify-center text-white relative top-0.5">
                                     <AddIcon
                                         className="w-[0.3rem] h-[0.3rem] text-white hover:opacity-70 cursor-pointer"

@@ -512,7 +512,7 @@ export function windowReducer(
                         hash: Date.now() + Math.floor(Math.random() * 100000),
                         isRunning: true,
                         isCurrentTab: true,
-                        title: "Initial",
+                        title: "New Tab",
                     },
                 ],
                 current: true,

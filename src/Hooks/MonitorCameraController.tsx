@@ -43,7 +43,7 @@ export function MonitorCameraController({
     const DISTANCE = 700;
     const HOVER_DISTANCE = 320;
 
-    const TRANSITION_SPEED = 0.04;
+    const TRANSITION_SPEED = 0.09;
 
     const isActive = cameraMode === "monitor";
 

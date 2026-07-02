@@ -47,7 +47,7 @@ export const DeskTop = () => {
                         containerDirection="row"
                     >
                         <Finder/>
-                        <Chrome/>
+                        <Chrome size="h-4"/>
                         <Divider/>
 
                     </GlassContainer_two>
