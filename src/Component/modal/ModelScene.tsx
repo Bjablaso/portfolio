@@ -2,7 +2,7 @@
 import { Canvas, invalidate, useThree } from "@react-three/fiber";
 import * as React from 'react';
 import { Environment, OrbitControls } from "@react-three/drei";
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useEffect, useLayoutEffect, useRef } from "react";
 import '../../index.css'
 import { BackWall, Flooring, LeftWall, RightWall } from "./RoomSpace.tsx";
 import { Model } from "./Model.tsx";
@@ -13,22 +13,71 @@ import { useMonitorFromStore } from "../../Store/useMonitorFromStore.tsx";
 import { MonitorCameraController } from "../../Hooks/MonitorCameraController.tsx";
 import { CameraPositionTracker } from "../../Tracker/CameraPositionTracker.tsx";
 import { ManualControl } from "../../Hooks/useManualControl.tsx";
-import { useCameraStore } from "../../Store/cameraStore.tsx";
+import { useCameraStore, type CameraMode } from "../../Store/cameraStore.tsx";
+import { DEFAULT_FOV } from "../../Store/cameraConfig.ts";
 
-const LOCKED_FOV = 70;
+// The Canvas `camera` prop previously included a hardcoded
+// `rotation: [1.361, 0, -45.2]`. -45.2 is radians, not degrees — that's
+// ~26 full turns, almost certainly a stale/typo value with no real
+// meaning. It happened to be harmless only because useCameraIntro
+// re-points the camera via lookAt() on its very first animation frame
+// whenever intro mode is enabled. If intro mode were ever off by
+// default, or that hook's first frame were delayed, the camera would
+// briefly render facing a garbage direction.
+//
+// Fix: don't hardcode a rotation at all. Instead, point the camera at
+// the same lookAt target every other mode already treats as the
+// baseline (origin, at intro's `height`) synchronously on mount, via
+// useLayoutEffect so it's resolved before the first paint — regardless
+// of which mode is active or how any other effect happens to be timed.
+const INITIAL_LOOKAT = new THREE.Vector3(0, 600, 0);
+
+const CameraInitialOrientation: React.FC = () => {
+    const { camera } = useThree();
+
+    useLayoutEffect(() => {
+        camera.lookAt(INITIAL_LOOKAT);
+        camera.updateMatrixWorld();
+        invalidate();
+        // Intentionally run once on mount only — every mode's own
+        // controller takes over orientation from here.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return null;
+};
 
 // Lives inside Canvas — has access to useThree.
 // Keeps camera aspect ratio in sync with the actual rendered size on every resize.
-const CameraResizeLock: React.FC = () => {
+//
+// FIX: previously this unconditionally reset camera.fov = LOCKED_FOV on
+// every resize, regardless of which mode owned the camera. That fought
+// MonitorCameraController's own fov control (80 normal / 52 hovered),
+// producing a visible fov "snap" any time the window resized while in
+// monitor mode. Aspect must ALWAYS be corrected here — that's what
+// actually prevents anamorphic/stretched rendering on resize — but fov
+// should only be forced back to the default when monitor mode isn't
+// the one currently driving it.
+const CameraResizeLock: React.FC<{ cameraMode: CameraMode }> = ({ cameraMode }) => {
     const { camera, gl, size } = useThree();
 
     useEffect(() => {
         if (!(camera instanceof THREE.PerspectiveCamera)) return;
-        camera.fov = LOCKED_FOV;
+
+        // Aspect must track the real container size unconditionally,
+        // in every mode, or the render becomes stretched.
         camera.aspect = size.width / size.height;
+
+        // Only intro/manual modes use DEFAULT_FOV. While monitor mode
+        // is active, MonitorCameraController owns camera.fov every
+        // frame — don't fight it here.
+        if (cameraMode !== "monitor") {
+            camera.fov = DEFAULT_FOV;
+        }
+
         camera.updateProjectionMatrix();
         invalidate();
-    }, [camera, size.width, size.height]);
+    }, [camera, size.width, size.height, cameraMode]);
 
     useEffect(() => {
         gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -54,7 +103,7 @@ export const ModelScene: React.FC = () => {
     useCameraIntro(orbitRef, {
         startX: -1300,
         endX: 1800,
-        height: 500,
+        height: 600,
         distance: 1400,
         duration: 35000,
         enabled: cameraMode === 'intro',
@@ -90,9 +139,8 @@ export const ModelScene: React.FC = () => {
                 // ResizeObserver and always matches it exactly.
                 style={{ display: 'block', width: '100%', height: '100%' }}
                 camera={{
-                    position: [-1300.17, 500, 500],
-                    rotation: [1.361, 0, -45.2],
-                    fov: LOCKED_FOV,
+                    position: [-1300.17, 600, 500],
+                    fov: DEFAULT_FOV,
                     far: 10000,
                 }}
                 shadows
@@ -105,7 +153,8 @@ export const ModelScene: React.FC = () => {
                     preserveDrawingBuffer: true,
                 }}
             >
-                <CameraResizeLock />
+                <CameraInitialOrientation />
+                <CameraResizeLock cameraMode={cameraMode} />
                 <CameraPositionTracker />
 
                 <ambientLight intensity={0.3} />
@@ -168,3 +217,4 @@ export const ModelScene: React.FC = () => {
         </div>
     );
 };
+

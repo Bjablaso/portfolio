@@ -2,7 +2,8 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 
 import { GlassContainer_two } from "./GlassContainer.tsx";
-import type {dropManuItems} from "../../Interfaces/WindowIteface.ts";
+import type {dropManuItems, RunningWindow} from "../../Interfaces/WindowIteface.ts";
+import {useWindowContext} from "../../Context/useWindowContext.ts";
 
 interface DropDownManuProps {
     dropItems?: dropManuItems[];
@@ -17,7 +18,15 @@ export const DropDownManu: React.FC<DropDownManuProps> = ({
                                                               onMouseEnter,
                                                               onMouseLeave,
                                                           }) => {
+    //const {windowState, openApplication}=useWindowContext()
+
     if (!anchorRect || !dropItems?.length) return null;
+
+    // const performAction = (window: RunningWindow)=.{
+    //     switch (action: String){
+    //         case
+    //     }
+    // }
 
     return createPortal(
         <div

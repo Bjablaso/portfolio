@@ -28,10 +28,10 @@ const FinderRow = ({ item, onSelect }: { item: FinderControlData; onSelect: (id:
             }`
             }>
             <Icon
-                size="var(--window-icon-md)"
+                size="var(--window-icon-sm)"
                 className={item.active ? 'text-white' : 'text-[#e8eaed]'}
             />
-            <span className="window-text-md">{item.name}</span>
+            <span className="window-text-sm">{item.name}</span>
         </li>
     );
 };
@@ -61,7 +61,7 @@ export const FinderControlBody = ({
     const favoriteItems = data.filter(item => item.id >= FAVORITES_FROM_ID);
 
     return (
-        <div className="w-full h-full flex flex-col window-gap-sm window-p-md">
+        <div className="w-full h-full flex flex-col window-gap-sm window-p-md rounded-sm border-1 border-gray-400">
             <ul className="flex flex-col window-gap-sm">
                 {topItems.map(item => (
                     <FinderRow key={item.id} item={item} onSelect={onSelect} />

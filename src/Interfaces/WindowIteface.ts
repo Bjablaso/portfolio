@@ -10,8 +10,14 @@ export interface ApplicationInfo{
     runningApplication: ComputerApplication[];
 }
 
+// interface DocumentList{
+//     icon?: LucideIcon | SVGElement | ImageData | null;
+//     name: string;
+// }
+
 export interface ComputerApplication{
     applicationName: string;
+    iconUrl: string ;
     type: "text" | "icon";
     isActive: boolean;
     // isDefault: boolean;
@@ -21,6 +27,10 @@ export interface ComputerApplication{
     manuIcon: ManuBarIcon[]
     zIndex: number;        // ← stack position
     isBackground: boolean; // ← true when sent behind
+    minWindowWidth: number;
+    minWindowHeight: number;
+
+   // chromePage?: ChromePage;
 }
 //////////////////
 
@@ -68,8 +78,15 @@ export interface WindowContextType {
     windowRef: React.RefObject<HTMLDivElement | null>;
     parentRef: React.RefObject<HTMLDivElement | null>;
 
-    openApplication: (appName: string, windowWidth: number, windowHeight: number) => void;
+    openApplication: (
+        appName: string,
+        windowWidth: number,
+        windowHeight: number,
+        chromePage?: ChromePage
+    ) => void;
     canCreateWindow: (appName: string ) => boolean;
+
+    systemApplications: () => SystemApplication[];
 }
 export interface WindowControlItem {
     id: number;
@@ -103,6 +120,7 @@ export interface RunningWindow {
     current: boolean;
     windowHeight: number;
     windowWidth: number;
+    chromePage?: ChromePage;
 }
 // add payload
 export type WindowAction =
@@ -113,9 +131,17 @@ export type WindowAction =
     |  { type: "DELETE_TAB", payload: { tabHash: number , windowHash: number } }
     | { type: "SWITCH_TAB", payload: { windowHash: number , tabHash: number} }// tab should carry window index value
     // | {type: "SWITCH_WINDOW", payload: { windowHash: number , zIndex: number } }
-    | { type: "CREATE_WINDOW", payload: { app: string, windowWidth: number, windowHeight: number } }
+    | { type: "CREATE_WINDOW", payload: { app: string, windowWidth: number, windowHeight: number,  chromePage?: ChromePage;} }
     | { type: "SWITCH_WINDOW", payload: { windowHash: number, zIndex: number } }
     | { type: "BRING_TO_FRONT", payload: { app: string } }
 
 
+export interface SystemApplication {
+    applicationName: string;
+    iconUrl: string;
+    minWidth: number;
+    minHeight: number;
+}
+
+export type ChromePage = "google" | "portfolio" | null;
 

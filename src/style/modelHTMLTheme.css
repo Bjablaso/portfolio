@@ -35,9 +35,21 @@
     --window-radius-xl: 0.5rem;
     --window-radius-xxl: 0.75rem;
     --window-radius-xxxl: 1rem;
+    --color-window-outerbody: #111111;
+    --color-window-innerbody: #373a3c;
+
+    --window-text-white: #ffffff;
+
+    --size-icon-sm: var(--window-icon-sm);
+    --size-icon-md: var(--window-icon-md);
+    --size-icon-lg: var(--window-icon-lg);
+    --size-icon-xl: var(--window-icon-xl);
+    --size-icon-xxl: var(--window-icon-xxl);
+    --size-icon-xxxl: var(--window-icon-xxxl);
+
 }
 
-
+.window-text-w {color: var(--window-text-white);}
 .window-text-sm { font-size: var(--window-text-sm); }
 .window-text-md { font-size: var(--window-text-md); }
 .window-text-lg { font-size: var(--window-text-lg); }
@@ -79,3 +91,5 @@
 .window-rounded-xl { border-radius: var(--window-radius-xl); }
 .window-rounded-xxl { border-radius: var(--window-radius-xxl); }
 .window-rounded-xxxl { border-radius: var(--window-radius-xxxl); }
+.window-innerbody-color { background-color: var(--color-window-innerbody);}
+.window-outerbody-color { background-color: var(--color-window-outerbody); }

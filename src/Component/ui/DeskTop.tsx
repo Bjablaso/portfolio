@@ -1,6 +1,6 @@
 // @flow
 
-import {Edge} from "../../assest/Icons/Edge.tsx";
+import {Chrome} from "../../assest/Icons/Chrome.tsx";
 import {Finder} from "../../assest/Icons/Finder.tsx";
 import {GlassContainer_two} from "./GlassContainer.tsx";
 import Divider from "./Divider.tsx";
@@ -47,7 +47,7 @@ export const DeskTop = () => {
                         containerDirection="row"
                     >
                         <Finder/>
-                        <Edge/>
+                        <Chrome size="h-4"/>
                         <Divider/>
 
                     </GlassContainer_two>

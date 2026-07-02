@@ -1,20 +1,25 @@
 
-import * as React from "react";
+
 import { useWindowContext } from "../../Context/useWindowContext.ts";
 
-export const Edge: React.FC = () => {
+
+export const Chrome = ({size}: {size: string}) => {
     const { openApplication } = useWindowContext();
 
     return (
         <div
             className="flex items-center justify-center object-contain rounded-md hover:opacity-40 cursor-pointer"
-            onClick={()=> openApplication("Edge", 280, 180)}
+            // Chrome dock icon
+            onClick={() => openApplication("Chrome", 340, 220, "google")}
         >
             <img
-                className="h-4"
-                src="/assets/edge-svgrepo-com.svg"
-                alt="Edge Icon"
+                className={`${size}`}
+                src="/assets/chrome.svg"
+                alt="Chrome Icon"
             />
         </div>
     );
 };
+//"h-4"
+
+//{item.title}
