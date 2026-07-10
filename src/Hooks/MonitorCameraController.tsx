@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { cameraTransitionStore } from "../Store/cameraTransitionStore";
-import { useMonitorInteractionStore } from "../Store/monitorInteractionStore";
+import {monitorInteractionActions, useMonitorInteractionStore} from "../Store/monitorInteractionStore";
 import { DEFAULT_FOV, MONITOR_FOV, MONITOR_ZOOM_FOV } from "../Store/cameraConfig";
 
 type CameraMode = "intro" | "monitor" | "manual";
@@ -43,12 +43,14 @@ export function MonitorCameraController({
     const DISTANCE = 700;
     const HOVER_DISTANCE = 320;
 
-    const TRANSITION_SPEED = 0.09;
+    const TRANSITION_SPEED = 0.05;
 
     const isActive = cameraMode === "monitor";
 
     useEffect(() => {
         if (!isActive || !monitor) return;
+
+        monitorInteractionActions.setFocused(false);
 
         const box = new THREE.Box3().setFromObject(monitor);
         box.getCenter(center.current);
@@ -91,6 +93,8 @@ export function MonitorCameraController({
             // not this controller's own MONITOR_FOV. Restoring
             // normalFov.current here left intro/manual mode stuck at
             // FOV 80 after any visit to monitor mode.
+            monitorInteractionActions.setFocused(false);
+
             if (camera instanceof THREE.PerspectiveCamera) {
                 camera.fov = DEFAULT_FOV;
                 camera.updateProjectionMatrix();
@@ -139,6 +143,9 @@ export function MonitorCameraController({
 
                 transitioning.current = false;
                 settled.current = true;
+
+                monitorInteractionActions.setFocused(true); // NEW: only now is it "focused"
+
 
                 invalidate();
                 setTimeout(() => invalidate(), 50);
