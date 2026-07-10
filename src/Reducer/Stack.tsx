@@ -1,4 +1,4 @@
-import type { WindowState } from "../Interfaces/WindowIteface.ts";
+import type {ComputerApplication, WindowState} from "../Interfaces/WindowIteface.ts";
 
 export function push(
     currentWindowMap: Map<string, WindowState>,
@@ -43,4 +43,80 @@ export function moveToFront(
     newWindowMap.set(targetID, targetWindow);
 
     return newWindowMap;
+}
+
+
+export function getForegroundWindow(
+    windowMap: Map<string, WindowState>
+): WindowState | null {
+    const windows = Array.from(windowMap.values());
+
+    return windows.at(-1) ?? null;
+}
+
+/**
+ * Marks only the final window in the Map as active.
+ *
+ * The Map order represents the window stack:
+ * first = background
+ * last = foreground
+ */
+export function updateActiveWindow(
+    windowMap: Map<string, WindowState>
+): Map<string, WindowState> {
+    const foregroundWindow = getForegroundWindow(windowMap);
+
+    const updatedWindowMap =
+        new Map<string, WindowState>();
+
+    windowMap.forEach((window, windowID) => {
+        updatedWindowMap.set(windowID, {
+            ...window,
+            isActive:
+                windowID === foregroundWindow?.id,
+        });
+    });
+
+    return updatedWindowMap;
+}
+
+/**
+ * Updates the menu-bar application based on the foreground window.
+ *
+ * Preview becomes active when no windows remain open.
+ */
+export function updateActiveApplication(
+    applications: ComputerApplication[],
+    foregroundWindow: WindowState | null
+): ComputerApplication[] {
+    const activeApplicationName =
+        foregroundWindow?.app ?? "Preview";
+
+    return applications.map(application => ({
+        ...application,
+        isActive:
+            application.applicationName ===
+            activeApplicationName,
+    }));
+}
+
+/**
+ * Removes a window and recalculates the foreground window.
+ */
+export function removeWindowFromStack(
+    windowMap: Map<string, WindowState>,
+    windowID: string
+): Map<string, WindowState> {
+    if (!windowMap.has(windowID)) {
+        return windowMap;
+    }
+
+    const updatedWindowMap =
+        new Map(windowMap);
+
+    updatedWindowMap.delete(windowID);
+
+    return updateActiveWindow(
+        updatedWindowMap
+    );
 }

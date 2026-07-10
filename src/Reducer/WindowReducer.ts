@@ -6,7 +6,14 @@ import type {
 } from "../Interfaces/WindowIteface.ts";
 import {FaWifi, FaApple} from "react-icons/fa";
 import {IoBatteryFull, IoSearch} from "react-icons/io5";
-import {moveToFront, push} from "./Stack.tsx";
+import {
+    getForegroundWindow,
+    moveToFront,
+    push,
+    removeWindowFromStack,
+    updateActiveApplication,
+    updateActiveWindow
+} from "./Stack.tsx";
 
 
 // export interface ComputerApplication{
@@ -490,232 +497,241 @@ export function windowReducer(
                 openAppWindow: updatedWindowStack,
             };
         }
-        // case "EXIT": {
-        //     const targetApp = state.runningApplication.find(app =>
-        //         app.windowState?.runningWindows.some(
-        //             win => win.hash === action.payload.hash
-        //         )
-        //     );
-        //
-        //     if (!targetApp || !targetApp.windowState) return state;
-        //
-        //     const remainingWindows =
-        //         targetApp.windowState.runningWindows.filter(
-        //             win => win.hash !== action.payload.hash
-        //         );
-        //
-        //     const updatedApps = state.runningApplication.map(app => {
-        //         if (app.applicationName !== targetApp.applicationName) {
-        //             return app;
-        //         }
-        //
-        //         return {
-        //             ...app,
-        //             isActive: remainingWindows.length > 0,
-        //             isBackground: true,
-        //             windowState: {
-        //                 ...targetApp.windowState!,
-        //                 runningWindows: remainingWindows
-        //             }
-        //         };
-        //     });
-        //
-        //     const nextApp = findForegroundApp(updatedApps);
-        //
-        //     if (!nextApp) {
-        //         return {
-        //             ...state,
-        //             runningApplication: buildStack(updatedApps, "Preview")
-        //         };
-        //     }
-        //
-        //     return {
-        //         ...state,
-        //         runningApplication: buildStack(
-        //             updatedApps,
-        //             nextApp.applicationName
-        //         )
-        //     };
-        // }
-        //
-        // case "CREATE_TAB": {
-        //     const targetApp = state.runningApplication.find(app =>
-        //         app.windowState?.runningWindows.some(
-        //             win => win.hash === action.payload.windowHash
-        //         )
-        //     );
-        //
-        //     if (!targetApp || !targetApp.windowState) return state;
-        //
-        //     const ws = targetApp.windowState;
-        //
-        //     const targetWindow = ws.runningWindows.find(
-        //         win => win.hash === action.payload.windowHash
-        //     );
-        //
-        //     if (!targetWindow || targetWindow.windowTab.length >= ws.maxTab) {
-        //         return state;
-        //     }
-        //
-        //     const newTab = {
-        //         hash: Date.now() + Math.floor(Math.random() * 100000),
-        //         title: action.payload.title,
-        //         isCurrentTab: true,
-        //         isRunning: true
-        //     };
-        //
-        //     const updatedApps = state.runningApplication.map(app => {
-        //         if (app.applicationName !== targetApp.applicationName) {
-        //             return app;
-        //         }
-        //
-        //         return {
-        //             ...app,
-        //             windowState: {
-        //                 ...ws,
-        //                 runningWindows: ws.runningWindows.map(win => {
-        //                     if (win.hash !== action.payload.windowHash) {
-        //                         return win;
-        //                     }
-        //
-        //                     return {
-        //                         ...win,
-        //                         windowTab: [
-        //                             ...win.windowTab.map(tab => ({
-        //                                 ...tab,
-        //                                 isCurrentTab: false
-        //                             })),
-        //                             newTab
-        //                         ]
-        //                     };
-        //                 })
-        //             }
-        //         };
-        //     });
-        //
-        //     return {
-        //         ...state,
-        //         runningApplication: updatedApps
-        //     };
-        // }
-
-        // case "DELETE_TAB": {
-        //     const targetApp = state.runningApplication.find(app =>
-        //         app.windowState?.runningWindows.some(
-        //             win => win.hash === action.payload.windowHash
-        //         )
-        //     );
-        //
-        //     if (!targetApp || !targetApp.windowState) return state;
-        //
-        //     const ws = targetApp.windowState;
-        //
-        //     const updatedApps = state.runningApplication.map(app => {
-        //         if (app.applicationName !== targetApp.applicationName) {
-        //             return app;
-        //         }
-        //
-        //         return {
-        //             ...app,
-        //             windowState: {
-        //                 ...ws,
-        //                 runningWindows: ws.runningWindows.map(win => {
-        //                     if (win.hash !== action.payload.windowHash) {
-        //                         return win;
-        //                     }
-        //
-        //                     const tabIndex = win.windowTab.findIndex(
-        //                         tab => tab.hash === action.payload.tabHash
-        //                     );
-        //
-        //                     const updatedTabs = win.windowTab.filter(
-        //                         tab => tab.hash !== action.payload.tabHash
-        //                     );
-        //
-        //                     const wasActive =
-        //                         win.windowTab[tabIndex]?.isCurrentTab;
-        //
-        //                     if (wasActive && updatedTabs.length > 0) {
-        //                         const newActiveIndex = Math.max(0, tabIndex - 1);
-        //
-        //                         updatedTabs[newActiveIndex] = {
-        //                             ...updatedTabs[newActiveIndex],
-        //                             isCurrentTab: true
-        //                         };
-        //                     }
-        //
-        //                     return {
-        //                         ...win,
-        //                         windowTab: updatedTabs
-        //                     };
-        //                 })
-        //             }
-        //         };
-        //     });
-        //
-        //     return {
-        //         ...state,
-        //         runningApplication: updatedApps
-        //     };
-        // }
-
-        case "SWITCH_TAB": {
-            // const targetApp = state.runningApplication.find(app =>
-            //     app.windowState?.runningWindows.some(
-            //         win => win.hash === action.payload.windowHash
-            //     )
-            // );
-            //
-            // if (!targetApp || !targetApp.windowState) return state;
-            //
-            // const ws = targetApp.windowState;
-            //
-            // const updatedApps = state.runningApplication.map(app => {
-            //     if (app.applicationName !== targetApp.applicationName) {
-            //         return app;
-            //     }
-
-            //     return {
-            //         ...app,
-            //         windowState: {
-            //             ...ws,
-            //             runningWindows: ws.runningWindows.map(win => {
-            //                 if (win.hash !== action.payload.windowHash) {
-            //                     return win;
-            //                 }
-            //
-            //                 return {
-            //                     ...win,
-            //                     windowTab: win.windowTab.map(tab => ({
-            //                         ...tab,
-            //                         isCurrentTab:
-            //                             tab.hash === action.payload.tabHash
-            //                     }))
-            //                 };
-            //             })
-            //         }
-            //     };
-            // });
-
-            return {
-                // ...state,
-                // runningApplication: updatedApps
-            };
-        }
-
-        case "SWITCH_WINDOW": {
-            const updatedWindowMap = moveToFront(
-                state.openAppWindow,
-                action.payload.windowID
-            );
-
-            if (updatedWindowMap === state.openAppWindow) {
+        case "EXIT": {
+            if (
+                !state.openAppWindow.has(
+                    action.payload.windowID
+                )
+            ) {
                 return state;
             }
+
+            const updatedWindowMap =
+                removeWindowFromStack(
+                    state.openAppWindow,
+                    action.payload.windowID
+                );
+
+            const foregroundWindow =
+                getForegroundWindow(
+                    updatedWindowMap
+                );
+
+            const updatedApplications =
+                updateActiveApplication(
+                    state.runningApplication,
+                    foregroundWindow
+                );
 
             return {
                 ...state,
                 openAppWindow: updatedWindowMap,
+                runningApplication:
+                updatedApplications,
+            };
+        }
+        case "CREATE_TAB": {
+            const targetWindow = state.openAppWindow.get(
+                action.payload.windowID
+            );
+
+            if (!targetWindow) {
+                return state;
+            }
+
+            const runningTabCount =
+                targetWindow.windowTab.filter(
+                    tab => tab.isRunning
+                ).length;
+
+            if (runningTabCount >= targetWindow.maxTab) {
+                return state;
+            }
+
+            const newTab: RunningTab = {
+                hash:
+                    Date.now() +
+                    Math.floor(Math.random() * 100000),
+
+                title: action.payload.title,
+                isCurrentTab: true,
+                isRunning: true,
+            };
+
+            const updatedWindow: WindowState = {
+                ...targetWindow,
+
+                windowTab: [
+                    ...targetWindow.windowTab.map(tab => ({
+                        ...tab,
+                        isCurrentTab: false,
+                    })),
+
+                    newTab,
+                ],
+            };
+
+            const updatedWindowMap =
+                new Map(state.openAppWindow);
+
+            updatedWindowMap.set(
+                action.payload.windowID,
+                updatedWindow
+            );
+
+            return {
+                ...state,
+                openAppWindow: updatedWindowMap,
+            };
+        }
+
+        case "DELETE_TAB": {
+            const targetWindow = state.openAppWindow.get(
+                action.payload.windowID
+            );
+
+            if (!targetWindow) {
+                return state;
+            }
+
+            const targetTabIndex =
+                targetWindow.windowTab.findIndex(
+                    tab =>
+                        tab.hash ===
+                        action.payload.tabHash
+                );
+
+            if (targetTabIndex === -1) {
+                return state;
+            }
+
+            const targetTab =
+                targetWindow.windowTab[targetTabIndex];
+
+            const updatedTabs =
+                targetWindow.windowTab.filter(
+                    tab =>
+                        tab.hash !==
+                        action.payload.tabHash
+                );
+
+            if (
+                targetTab.isCurrentTab &&
+                updatedTabs.length > 0
+            ) {
+                const newActiveIndex = Math.max(
+                    0,
+                    targetTabIndex - 1
+                );
+
+                updatedTabs[newActiveIndex] = {
+                    ...updatedTabs[newActiveIndex],
+                    isCurrentTab: true,
+                };
+            }
+
+            const updatedWindow: WindowState = {
+                ...targetWindow,
+                windowTab: updatedTabs,
+            };
+
+            const updatedWindowMap =
+                new Map(state.openAppWindow);
+
+            updatedWindowMap.set(
+                action.payload.windowID,
+                updatedWindow
+            );
+
+            return {
+                ...state,
+                openAppWindow: updatedWindowMap,
+            };
+        }
+
+        case "SWITCH_TAB": {
+            const targetWindow = state.openAppWindow.get(
+                action.payload.windowID
+            );
+
+            if (!targetWindow) {
+                return state;
+            }
+
+            const targetTabExists =
+                targetWindow.windowTab.some(
+                    tab =>
+                        tab.hash ===
+                        action.payload.tabHash &&
+                        tab.isRunning
+                );
+
+            if (!targetTabExists) {
+                return state;
+            }
+
+            const updatedWindow: WindowState = {
+                ...targetWindow,
+
+                windowTab:
+                    targetWindow.windowTab.map(tab => ({
+                        ...tab,
+
+                        isCurrentTab:
+                            tab.hash ===
+                            action.payload.tabHash &&
+                            tab.isRunning,
+                    })),
+            };
+
+            const updatedWindowMap =
+                new Map(state.openAppWindow);
+
+            updatedWindowMap.set(
+                action.payload.windowID,
+                updatedWindow
+            );
+
+            return {
+                ...state,
+                openAppWindow: updatedWindowMap,
+            };
+        }
+        case "SWITCH_WINDOW": {
+            const movedWindowMap =
+                moveToFront(
+                    state.openAppWindow,
+                    action.payload.windowID
+                );
+
+            if (
+                movedWindowMap ===
+                state.openAppWindow
+            ) {
+                return state;
+            }
+
+            const updatedWindowMap =
+                updateActiveWindow(
+                    movedWindowMap
+                );
+
+            const foregroundWindow =
+                getForegroundWindow(
+                    updatedWindowMap
+                );
+
+            return {
+                ...state,
+
+                openAppWindow:
+                updatedWindowMap,
+
+                runningApplication:
+                    updateActiveApplication(
+                        state.runningApplication,
+                        foregroundWindow
+                    ),
             };
         }
 
