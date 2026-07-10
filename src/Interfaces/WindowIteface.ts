@@ -8,29 +8,23 @@ import * as React from "react";
 export interface ApplicationInfo{
     icon: IconType
     runningApplication: ComputerApplication[];
+    openAppWindow: Map<string, WindowState>;
+    manuBarIcon: ManuBarIcon[];
 }
 
-// interface DocumentList{
-//     icon?: LucideIcon | SVGElement | ImageData | null;
-//     name: string;
-// }
+
 
 export interface ComputerApplication{
     applicationName: string;
-    iconUrl: string ;
+    iconUrl?: string ;
     type: "text" | "icon";
     isActive: boolean;
-    // isDefault: boolean;
     isManu: boolean;
     applicationManu: SubItem[];
-    windowState: WindowState | null;
-    manuIcon: ManuBarIcon[]
-    zIndex: number;        // ← stack position
-    isBackground: boolean; // ← true when sent behind
-    minWindowWidth: number;
-    minWindowHeight: number;
-
-   // chromePage?: ChromePage;
+   chromePage?: ChromePage;
+    maxWindow: number;
+    minWindowWidth?: number;
+    minWindowHeight?: number;
 }
 //////////////////
 
@@ -54,7 +48,6 @@ interface ManuBarIcon{
     type: "icon" | "text";
     isActive: boolean;
     icon?: IconType;
-
 }
 
 
@@ -62,21 +55,28 @@ interface ManuBarIcon{
 
 ///////////////////////////////
 
-export interface WindowState {
-    windowControl: WindowControlItem[];
-    tabControl: TabControl;
-    runningWindows: RunningWindow[]
-    maxTab: number;
-    maxWindow: number;
-    zIndex: number;
-}
-
+// export interface WindowState {
+//     windowControl: WindowControlItem[];
+//     tabControl: TabControl;
+//     maxTab: number;
+//     maxWindow: number;
+// }
 
 export interface WindowContextType {
     windowState: ApplicationInfo;
+
     dispatch: React.Dispatch<WindowAction>;
+
     windowRef: React.RefObject<HTMLDivElement | null>;
+
     parentRef: React.RefObject<HTMLDivElement | null>;
+
+    getActiveContext: () => {
+        activeApp: ComputerApplication | null;
+        currentWindow: WindowState | null;
+        currentTab: WindowState["windowTab"][number] | null;
+        tabArrayLength: number;
+    };
 
     openApplication: (
         appName: string,
@@ -84,7 +84,33 @@ export interface WindowContextType {
         windowHeight: number,
         chromePage?: ChromePage
     ) => void;
-    canCreateWindow: (appName: string ) => boolean;
+
+    openNewTab: (
+        windowID: string,
+        tabTitle: string
+    ) => void;
+
+    deleteTab: (
+        windowID: string,
+        tabHash: number
+    ) => void;
+
+    closeWindow: (
+        windowID: string
+    ) => void;
+
+    switchTab: (
+        windowID: string,
+        tabHash: number
+    ) => void;
+
+    moveWindowToFront: (
+        windowID: string
+    ) => void;
+
+    canCreateWindow: (
+        appName: string
+    ) => boolean;
 
     systemApplications: () => SystemApplication[];
 }
@@ -99,7 +125,6 @@ export interface TabControl {
     iconAdd: LucideIcon;
     iconMinus: LucideIcon;
     active: boolean;
-    // action: "CREATE";
 }
 export interface RunningTab {
     hash : number;
@@ -108,39 +133,105 @@ export interface RunningTab {
     isRunning: boolean,
 }
 
-export interface RunningWindow {
-    hash: number;
+/////////////////////// Example Rewrite
+
+////////////////////////////
+export interface WindowState {
+    id: string;
     app: string;
     title: string;
-    isRunning: boolean;
-    isClosed: boolean;
-    initialSizeX: number;
-    initialSizeY: number;
-    windowTab: RunningTab[];
-    current: boolean;
+    isActive: boolean;
+    isClosed: boolean,
     windowHeight: number;
     windowWidth: number;
     chromePage?: ChromePage;
+    windowTab: RunningTab[];
+    windowControl: WindowControlItem[];
+    tabControl: TabControl;
+    maxTab: number;
+    initalPositonX: number;
+    initalPositonY: number;
 }
 // add payload
+// export type WindowAction =
+//     | { type: "EXIT",  payload: { hash: number }  }
+//     | { type: "MINIMIZE", payload: { hash: number } }
+//     | { type: "EXPAND", payload: { hash: number } }
+//     | { type: "CREATE_TAB", payload: { title: string, windowHash: number } }
+//     |  { type: "DELETE_TAB", payload: { tabHash: number , windowHash: number } }
+//     | { type: "SWITCH_TAB", payload: { windowHash: number , tabHash: number} }// tab should carry window index value
+//     // | {type: "SWITCH_WINDOW", payload: { windowHash: number , zIndex: number } }
+//     | { type: "CREATE_WINDOW", payload: { app: string, windowWidth: number, windowHeight: number,  chromePage?: ChromePage;} }
+//     | { type: "SWITCH_WINDOW", payload: { windowHash: number, zIndex: number } }
+//    // | { type: "BRING_TO_FRONT", payload: { app: string } }
+//
 export type WindowAction =
-    | { type: "EXIT",  payload: { hash: number }  }
-    | { type: "MINIMIZE", payload: { hash: number } }
-    | { type: "EXPAND", payload: { hash: number } }
-    | { type: "CREATE_TAB", payload: { title: string, windowHash: number } }
-    |  { type: "DELETE_TAB", payload: { tabHash: number , windowHash: number } }
-    | { type: "SWITCH_TAB", payload: { windowHash: number , tabHash: number} }// tab should carry window index value
-    // | {type: "SWITCH_WINDOW", payload: { windowHash: number , zIndex: number } }
-    | { type: "CREATE_WINDOW", payload: { app: string, windowWidth: number, windowHeight: number,  chromePage?: ChromePage;} }
-    | { type: "SWITCH_WINDOW", payload: { windowHash: number, zIndex: number } }
-    | { type: "BRING_TO_FRONT", payload: { app: string } }
-
+    | {
+    type: "EXIT";
+    payload: {
+        windowID: string;
+    };
+}
+    | {
+    type: "MINIMIZE";
+    payload: {
+        windowID: string;
+    };
+}
+    | {
+    type: "EXPAND";
+    payload: {
+        windowID: string;
+    };
+}
+    | {
+    type: "CREATE_TAB";
+    payload: {
+        title: string;
+        windowID: string;
+    };
+}
+    | {
+    type: "DELETE_TAB";
+    payload: {
+        tabHash: number;
+        windowID: string;
+    };
+}
+    | {
+    type: "SWITCH_TAB";
+    payload: {
+        windowID: string;
+        tabHash: number;
+    };
+}
+    | {
+    type: "CREATE_WINDOW";
+    payload: {
+        app: string;
+        windowWidth: number;
+        windowHeight: number;
+        chromePage?: ChromePage;
+    };
+}
+    | {
+    type: "SWITCH_WINDOW";
+    payload: {
+        windowID: string;
+    };
+}
+    | {
+    type: "BRING_TO_FRONT";
+    payload: {
+        app: string;
+    };
+};
 
 export interface SystemApplication {
     applicationName: string;
     iconUrl: string;
-    minWidth: number;
-    minHeight: number;
+    //minWidth: number;
+   // minHeight: number;
 }
 
 export type ChromePage = "google" | "portfolio" | null;

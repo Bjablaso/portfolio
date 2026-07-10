@@ -1,19 +1,76 @@
 import {X, Minus, Expand, Plus} from "lucide-react";
-import type {ApplicationInfo, ComputerApplication, WindowAction} from "../Interfaces/WindowIteface.ts";
+import type {
+    ApplicationInfo, ChromePage, RunningTab, TabControl,
+    WindowAction,
+    WindowState
+} from "../Interfaces/WindowIteface.ts";
 import {FaWifi, FaApple} from "react-icons/fa";
 import {IoBatteryFull, IoSearch} from "react-icons/io5";
+import {moveToFront, push} from "./Stack.tsx";
 
 
-export const initialWindowStructure: ApplicationInfo=  {
+// export interface ComputerApplication{
+//     applicationName: string;
+//     iconUrl: string ;
+//     type: "text" | "icon";
+//     isActive: boolean;
+//     isManu: boolean;
+//     applicationManu: SubItem[];
+//     manuIcon: ManuBarIcon[]
+//     minWindowWidth: number;
+//     minWindowHeight: number;
+//     chromePage?: ChromePage;
+//     maxWindow: number;
+//
+// }
+
+// export interface SubItem {
+//     itemName: string;
+//     type: "text" | "icon";   // restrict to known values
+//     isActive: boolean;
+//     isSubManu: boolean;
+//     dropManuPosition?: number;
+//     subItemList?: string[];  // recursive nesting
+//     dopItemList?: dropManuItems[];      // maybe remove to add more future inheritance
+// }
+
+// windowState: {
+//     windowControl: [
+//         {
+//             id: 1,
+//             description: "exit",
+//             icon: X,
+//             color: "#ff5f57" // macOS red
+//         },
+//         {
+//             id: 2,
+//             description: "minimize",
+//             icon: Minus,
+//             color: "#febc2e" // macOS yellow
+//         },
+//         {
+//             id: 0,
+//             description: "expand",
+//             icon: Expand,
+//             color: "#28c840" // macOS green
+//         }
+//     ],
+//     tabControl: {
+//         iconAdd: Plus,
+//         iconMinus: X,
+//         active: false
+//     },
+
+export const initialWindowStructure: ApplicationInfo = {
     icon: FaApple,
-    runningApplication:[
+
+    runningApplication: [
         {
             applicationName: "Preview",
             type: "text",
             isActive: true,
             isManu: true,
-            isBackground: true,
-            zIndex: 0, // ← always base
+
             applicationManu: [
                 {
                     itemName: "Preview",
@@ -33,7 +90,7 @@ export const initialWindowStructure: ApplicationInfo=  {
                         {description: "Open..."},
                         {description: "Close Window"},
                         {description: "Save"},
-                    ]
+                    ],
                 },
                 {
                     itemName: "Edit",
@@ -48,7 +105,7 @@ export const initialWindowStructure: ApplicationInfo=  {
                         {description: "Copy"},
                         {description: "Paste"},
                         {description: "Select All"},
-                    ]
+                    ],
                 },
                 {
                     itemName: "View",
@@ -56,7 +113,7 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isActive: false,
                     isSubManu: true,
                     dropManuPosition: 120,
-                    dopItemList: []
+                    dopItemList: [],
                 },
                 {
                     itemName: "Window",
@@ -68,7 +125,7 @@ export const initialWindowStructure: ApplicationInfo=  {
                         {description: "Minimize"},
                         {description: "Zoom"},
                         {description: "Bring All to Front"},
-                    ]
+                    ],
                 },
                 {
                     itemName: "Help",
@@ -78,41 +135,21 @@ export const initialWindowStructure: ApplicationInfo=  {
                     dropManuPosition: 195,
                     dopItemList: [
                         {description: "Preview Help"},
-                    ]
+                    ],
                 },
             ],
-            windowState: null,
-            manuIcon: [
-                {
-                    itemName: "Battery",
-                    type: "icon",
-                    isActive: false,
-                    icon: IoBatteryFull,
-                },
-                {
-                    itemName: "Wifi",
-                    type: "icon",
-                    isActive: false,
-                    icon: FaWifi,
-                },
-                {
-                    itemName: "Search",
-                    type: "icon",
-                    isActive: false,
-                    icon: IoSearch,
-                }
-            ],
-            iconUrl: "",
-            minWindowWidth: 0,
-            minWindowHeight: 0
+            maxWindow: 5,
+            // minWindowWidth: 0,
+            // minWindowHeight: 0
         },
+
         {
             applicationName: "Chrome",
+            iconUrl: "/assets/edge-svgrepo-com.svg",
             type: "text",
             isActive: false,
             isManu: true,
-            isBackground: false,
-            zIndex: 1, // ← starts above Preview
+
             applicationManu: [
                 {
                     itemName: "Chrome",
@@ -120,13 +157,6 @@ export const initialWindowStructure: ApplicationInfo=  {
                     isActive: false,
                     isSubManu: false,
                     dropManuPosition: 60,
-                    // dopItemList: [
-                    //     { description: "New Window" },
-                    //     { description: "New Tab" },
-                    //     { description: "Close Window" },
-                    //     { description: "Close Tab" },
-                    //     { description: "Print..." },
-                    // ],
                 },
                 {
                     itemName: "File",
@@ -142,7 +172,6 @@ export const initialWindowStructure: ApplicationInfo=  {
                         {description: "Print..."},
                     ],
                 },
-
                 {
                     itemName: "Edit",
                     type: "text",
@@ -157,7 +186,6 @@ export const initialWindowStructure: ApplicationInfo=  {
                         {description: "Paste"},
                     ],
                 },
-
                 {
                     itemName: "View",
                     type: "text",
@@ -172,7 +200,6 @@ export const initialWindowStructure: ApplicationInfo=  {
                         {description: "Show Toolbar"},
                     ],
                 },
-
                 {
                     itemName: "History",
                     type: "text",
@@ -187,7 +214,6 @@ export const initialWindowStructure: ApplicationInfo=  {
                         {description: "Manage History"},
                     ],
                 },
-
                 {
                     itemName: "Tab",
                     type: "text",
@@ -202,8 +228,6 @@ export const initialWindowStructure: ApplicationInfo=  {
                         {description: "Close Tab"},
                     ],
                 },
-
-
                 {
                     itemName: "Help",
                     type: "text",
@@ -218,68 +242,19 @@ export const initialWindowStructure: ApplicationInfo=  {
                     ],
                 },
             ],
-            windowState: {
-                windowControl: [
-                    {
-                        id: 1,
-                        description: "exit",
-                        icon: X,
-                        color: "#ff5f57" // macOS red
-                    },
-                    {
-                        id: 2,
-                        description: "minimize",
-                        icon: Minus,
-                        color: "#febc2e" // macOS yellow
-                    },
-                    {
-                        id: 0,
-                        description: "expand",
-                        icon: Expand,
-                        color: "#28c840" // macOS green
-                    }
-                ],
-                tabControl: {
-                    iconAdd: Plus,
-                    iconMinus: X,
-                    active: false
-                },
-                runningWindows: [],
-                maxTab: 5,
-                maxWindow: 5,
-                zIndex: 10
-            },
-            manuIcon: [
-                {
-                    itemName: "Battery",
-                    type: "icon",
-                    isActive: false,
-                    icon: IoBatteryFull,
-                },
-                {
-                    itemName: "Wifi",
-                    type: "icon",
-                    isActive: false,
-                    icon: FaWifi,
-                },
-                {
-                    itemName: "Search",
-                    type: "icon",
-                    isActive: false,
-                    icon: IoSearch,
-                }
-            ],
-            iconUrl: "/assets/edge-svgrepo-com.svg",
-            minWindowWidth: 280,
-            minWindowHeight: 180
+            chromePage: "google",
+            maxWindow: 5,
+            minWindowWidth: 340,
+            minWindowHeight: 220,
         },
+
         {
             applicationName: "Finder",
+            iconUrl: "/assets/finder-svgrepo-com.svg",
             type: "text",
             isActive: false,
             isManu: true,
-            isBackground: true,
-            zIndex: 2,
+
             applicationManu: [
                 {
                     itemName: "File",
@@ -364,7 +339,111 @@ export const initialWindowStructure: ApplicationInfo=  {
                     ],
                 },
             ],
-            windowState: {
+            maxWindow: 1,
+            minWindowWidth: 200,
+            minWindowHeight: 160
+        },
+    ],
+
+    openAppWindow: new Map<string, WindowState>(),
+
+    manuBarIcon: [
+        {
+            itemName: "Battery",
+            type: "icon",
+            isActive: false,
+            icon: IoBatteryFull,
+        },
+        {
+            itemName: "Wifi",
+            type: "icon",
+            isActive: false,
+            icon: FaWifi,
+        },
+        {
+            itemName: "Search",
+            type: "icon",
+            isActive: false,
+            icon: IoSearch,
+        },
+    ],
+};
+
+function randomX() {
+    return Math.floor(Math.random() * 71) + 30; // 0–70 + 30 = 30–100
+}
+function  randomY(){
+    return Math.floor(Math.random()*11);
+}
+
+
+
+function generatContentHash(length: number = 16): string{
+    const chars = "abcdef0123456789";
+    let hash = "";
+
+    for (let i = 0; i < length; i++) {
+        hash += chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    return hash;
+}
+
+
+
+
+export function windowReducer(
+    state: ApplicationInfo,
+    action: WindowAction
+): ApplicationInfo {
+
+    switch (action.type) {
+
+        case "CREATE_WINDOW": {
+            const targetApplication = state.runningApplication.find(
+                app => app.applicationName === action.payload.app
+            );
+
+            if (!targetApplication) {
+                return state;
+            }
+
+            const numberOfOpenWindows = Array.from(
+                state.openAppWindow.values()
+            ).filter(
+                window => window.app === action.payload.app
+            ).length;
+
+            if (numberOfOpenWindows >= targetApplication.maxWindow) {
+                return state;
+            }
+
+            const newWindow: WindowState = {
+                id: generatContentHash(),
+                app: action.payload.app,
+                title: action.payload.app,
+                isActive: true,
+                isClosed: false,
+
+                windowHeight: action.payload.windowHeight,
+                windowWidth: action.payload.windowWidth,
+
+                chromePage:
+                    action.payload.app === "Chrome"
+                        ? action.payload.chromePage ?? "google"
+                        : null,
+
+                windowTab: [
+                    {
+                        hash: Date.now() + Math.floor(Math.random() * 100000),
+                        isRunning: true,
+                        isCurrentTab: true,
+                        title: "New Tab",
+                    },
+                ],
+
+                maxTab: 5,
+
                 windowControl: [
                     {
                         id: 1,
@@ -379,416 +458,276 @@ export const initialWindowStructure: ApplicationInfo=  {
                         color: "#febc2e",
                     },
                     {
-                        id: 3,
+                        id: 0,
                         description: "expand",
                         icon: Expand,
                         color: "#28c840",
                     },
                 ],
+
                 tabControl: {
                     iconAdd: Plus,
                     iconMinus: X,
                     active: false,
                 },
-                runningWindows: [],
-                maxTab: 5,
-                maxWindow: 1,
-                zIndex: 10,
-            },
-            manuIcon: [
-                {
-                    itemName: "Battery",
-                    type: "icon",
-                    isActive: false,
-                    icon: IoBatteryFull,
-                },
-                {
-                    itemName: "Wifi",
-                    type: "icon",
-                    isActive: false,
-                    icon: FaWifi,
-                },
-                {
-                    itemName: "Search",
-                    type: "icon",
-                    isActive: false,
-                    icon: IoSearch,
-                },
-            ],
-            iconUrl: "/assets/finder-svgrepo-com.svg",
-            minWindowWidth: 180,
-            minWindowHeight: 100
-        }
-    ]
-
-}
-
-function randomX() {
-    return Math.floor(Math.random() * 71) + 30; // 0–70 + 30 = 30–100
-}
-function  randomY(){
-    return Math.floor(Math.random()*11);
-}
-
-
-function buildStack(
-    apps: ComputerApplication[],
-    foregroundAppName: string
-): ComputerApplication[] {
-    const maxZ = Math.max(...apps.map(app => app.zIndex));
-
-    return apps.map(app => {
-        const isForeground = app.applicationName === foregroundAppName;
-
-        return {
-            ...app,
-            isActive: isForeground || app.isActive,
-            isBackground: !isForeground,
-            zIndex: isForeground ? maxZ + 1 : app.zIndex
-        };
-    });
-}
-
-function findForegroundApp(apps: ComputerApplication[]) {
-    return apps
-        .filter(app => app.isActive)
-        .sort((a, b) => b.zIndex - a.zIndex)[0];
-}
-
-
-export function windowReducer(
-    state: ApplicationInfo,
-    action: WindowAction
-): ApplicationInfo {
-
-    switch (action.type) {
-
-        case "CREATE_WINDOW": {
-            const targetIndex = state.runningApplication.findIndex(
-                app => app.applicationName === action.payload.app
-            );
-
-            if (targetIndex === -1) return state;
-
-            const targetApp = state.runningApplication[targetIndex];
-            const ws = targetApp.windowState;
-
-            if (!ws) return state;
-
-            const currentWindows = ws.runningWindows;
-
-            if (currentWindows.length >= ws.maxWindow) return state;
-
-            // const newWindow = {
-            //     hash: Date.now() + Math.floor(Math.random() * 100000),
-            //     app: action.payload.app,
-            //     title: action.payload.app,
-            //     isRunning: true,
-            //     isClosed: false,
-            //     initialSizeX: randomX(),
-            //     initialSizeY: randomY(),
-            //     windowTab: [
-            //         {
-            //             hash: Date.now() + Math.floor(Math.random() * 100000),
-            //             isRunning: true,
-            //             isCurrentTab: true,
-            //             title: "Initial"
-            //         }
-            //     ],
-            //     current: true,
-            //     windowHeight: action.payload.windowHeight,
-            //     windowWidth: action.payload.windowWidth
-            // };
-            const newWindow = {
-                hash: Date.now() + Math.floor(Math.random() * 100000),
-                app: action.payload.app,
-                title: action.payload.app,
-                isRunning: true,
-                isClosed: false,
-                initialSizeX: randomX(),
-                initialSizeY: randomY(),
-                windowTab: [
-                    {
-                        hash: Date.now() + Math.floor(Math.random() * 100000),
-                        isRunning: true,
-                        isCurrentTab: true,
-                        title: "New Tab",
-                    },
-                ],
-                current: true,
-                windowHeight: action.payload.windowHeight,
-                windowWidth: action.payload.windowWidth,
-                chromePage:
-                    action.payload.app === "Chrome"
-                        ? action.payload.chromePage ?? "google"
-                        : null,
+                initalPositonX: randomX(),
+                initalPositonY: randomY(),
             };
 
-            const updatedApps = state.runningApplication.map(app => {
-                if (app.applicationName !== action.payload.app) return app;
+            const updatedWindowStack = push(
+                state.openAppWindow,
+                newWindow
+            );
 
-                return {
-                    ...app,
-                    isActive: true,
-                    windowState: {
-                        ...ws,
-                        runningWindows: [
-                            ...currentWindows.map(win => ({
-                                ...win,
-                                current: false
-                            })),
-                            newWindow
-                        ]
-                    }
-                };
-            });
+            const updatedApplications = state.runningApplication.map(app => ({
+                ...app,
+                isActive: app.applicationName === action.payload.app,
+            }));
 
             return {
                 ...state,
-                runningApplication: buildStack(updatedApps, action.payload.app)
+                runningApplication: updatedApplications,
+                openAppWindow: updatedWindowStack,
             };
         }
+        // case "EXIT": {
+        //     const targetApp = state.runningApplication.find(app =>
+        //         app.windowState?.runningWindows.some(
+        //             win => win.hash === action.payload.hash
+        //         )
+        //     );
+        //
+        //     if (!targetApp || !targetApp.windowState) return state;
+        //
+        //     const remainingWindows =
+        //         targetApp.windowState.runningWindows.filter(
+        //             win => win.hash !== action.payload.hash
+        //         );
+        //
+        //     const updatedApps = state.runningApplication.map(app => {
+        //         if (app.applicationName !== targetApp.applicationName) {
+        //             return app;
+        //         }
+        //
+        //         return {
+        //             ...app,
+        //             isActive: remainingWindows.length > 0,
+        //             isBackground: true,
+        //             windowState: {
+        //                 ...targetApp.windowState!,
+        //                 runningWindows: remainingWindows
+        //             }
+        //         };
+        //     });
+        //
+        //     const nextApp = findForegroundApp(updatedApps);
+        //
+        //     if (!nextApp) {
+        //         return {
+        //             ...state,
+        //             runningApplication: buildStack(updatedApps, "Preview")
+        //         };
+        //     }
+        //
+        //     return {
+        //         ...state,
+        //         runningApplication: buildStack(
+        //             updatedApps,
+        //             nextApp.applicationName
+        //         )
+        //     };
+        // }
+        //
+        // case "CREATE_TAB": {
+        //     const targetApp = state.runningApplication.find(app =>
+        //         app.windowState?.runningWindows.some(
+        //             win => win.hash === action.payload.windowHash
+        //         )
+        //     );
+        //
+        //     if (!targetApp || !targetApp.windowState) return state;
+        //
+        //     const ws = targetApp.windowState;
+        //
+        //     const targetWindow = ws.runningWindows.find(
+        //         win => win.hash === action.payload.windowHash
+        //     );
+        //
+        //     if (!targetWindow || targetWindow.windowTab.length >= ws.maxTab) {
+        //         return state;
+        //     }
+        //
+        //     const newTab = {
+        //         hash: Date.now() + Math.floor(Math.random() * 100000),
+        //         title: action.payload.title,
+        //         isCurrentTab: true,
+        //         isRunning: true
+        //     };
+        //
+        //     const updatedApps = state.runningApplication.map(app => {
+        //         if (app.applicationName !== targetApp.applicationName) {
+        //             return app;
+        //         }
+        //
+        //         return {
+        //             ...app,
+        //             windowState: {
+        //                 ...ws,
+        //                 runningWindows: ws.runningWindows.map(win => {
+        //                     if (win.hash !== action.payload.windowHash) {
+        //                         return win;
+        //                     }
+        //
+        //                     return {
+        //                         ...win,
+        //                         windowTab: [
+        //                             ...win.windowTab.map(tab => ({
+        //                                 ...tab,
+        //                                 isCurrentTab: false
+        //                             })),
+        //                             newTab
+        //                         ]
+        //                     };
+        //                 })
+        //             }
+        //         };
+        //     });
+        //
+        //     return {
+        //         ...state,
+        //         runningApplication: updatedApps
+        //     };
+        // }
 
-        case "EXIT": {
-            const targetApp = state.runningApplication.find(app =>
-                app.windowState?.runningWindows.some(
-                    win => win.hash === action.payload.hash
-                )
-            );
-
-            if (!targetApp || !targetApp.windowState) return state;
-
-            const remainingWindows =
-                targetApp.windowState.runningWindows.filter(
-                    win => win.hash !== action.payload.hash
-                );
-
-            const updatedApps = state.runningApplication.map(app => {
-                if (app.applicationName !== targetApp.applicationName) {
-                    return app;
-                }
-
-                return {
-                    ...app,
-                    isActive: remainingWindows.length > 0,
-                    isBackground: true,
-                    windowState: {
-                        ...targetApp.windowState!,
-                        runningWindows: remainingWindows
-                    }
-                };
-            });
-
-            const nextApp = findForegroundApp(updatedApps);
-
-            if (!nextApp) {
-                return {
-                    ...state,
-                    runningApplication: buildStack(updatedApps, "Preview")
-                };
-            }
-
-            return {
-                ...state,
-                runningApplication: buildStack(
-                    updatedApps,
-                    nextApp.applicationName
-                )
-            };
-        }
-
-        case "CREATE_TAB": {
-            const targetApp = state.runningApplication.find(app =>
-                app.windowState?.runningWindows.some(
-                    win => win.hash === action.payload.windowHash
-                )
-            );
-
-            if (!targetApp || !targetApp.windowState) return state;
-
-            const ws = targetApp.windowState;
-
-            const targetWindow = ws.runningWindows.find(
-                win => win.hash === action.payload.windowHash
-            );
-
-            if (!targetWindow || targetWindow.windowTab.length >= ws.maxTab) {
-                return state;
-            }
-
-            const newTab = {
-                hash: Date.now() + Math.floor(Math.random() * 100000),
-                title: action.payload.title,
-                isCurrentTab: true,
-                isRunning: true
-            };
-
-            const updatedApps = state.runningApplication.map(app => {
-                if (app.applicationName !== targetApp.applicationName) {
-                    return app;
-                }
-
-                return {
-                    ...app,
-                    windowState: {
-                        ...ws,
-                        runningWindows: ws.runningWindows.map(win => {
-                            if (win.hash !== action.payload.windowHash) {
-                                return win;
-                            }
-
-                            return {
-                                ...win,
-                                windowTab: [
-                                    ...win.windowTab.map(tab => ({
-                                        ...tab,
-                                        isCurrentTab: false
-                                    })),
-                                    newTab
-                                ]
-                            };
-                        })
-                    }
-                };
-            });
-
-            return {
-                ...state,
-                runningApplication: updatedApps
-            };
-        }
-
-        case "DELETE_TAB": {
-            const targetApp = state.runningApplication.find(app =>
-                app.windowState?.runningWindows.some(
-                    win => win.hash === action.payload.windowHash
-                )
-            );
-
-            if (!targetApp || !targetApp.windowState) return state;
-
-            const ws = targetApp.windowState;
-
-            const updatedApps = state.runningApplication.map(app => {
-                if (app.applicationName !== targetApp.applicationName) {
-                    return app;
-                }
-
-                return {
-                    ...app,
-                    windowState: {
-                        ...ws,
-                        runningWindows: ws.runningWindows.map(win => {
-                            if (win.hash !== action.payload.windowHash) {
-                                return win;
-                            }
-
-                            const tabIndex = win.windowTab.findIndex(
-                                tab => tab.hash === action.payload.tabHash
-                            );
-
-                            const updatedTabs = win.windowTab.filter(
-                                tab => tab.hash !== action.payload.tabHash
-                            );
-
-                            const wasActive =
-                                win.windowTab[tabIndex]?.isCurrentTab;
-
-                            if (wasActive && updatedTabs.length > 0) {
-                                const newActiveIndex = Math.max(0, tabIndex - 1);
-
-                                updatedTabs[newActiveIndex] = {
-                                    ...updatedTabs[newActiveIndex],
-                                    isCurrentTab: true
-                                };
-                            }
-
-                            return {
-                                ...win,
-                                windowTab: updatedTabs
-                            };
-                        })
-                    }
-                };
-            });
-
-            return {
-                ...state,
-                runningApplication: updatedApps
-            };
-        }
+        // case "DELETE_TAB": {
+        //     const targetApp = state.runningApplication.find(app =>
+        //         app.windowState?.runningWindows.some(
+        //             win => win.hash === action.payload.windowHash
+        //         )
+        //     );
+        //
+        //     if (!targetApp || !targetApp.windowState) return state;
+        //
+        //     const ws = targetApp.windowState;
+        //
+        //     const updatedApps = state.runningApplication.map(app => {
+        //         if (app.applicationName !== targetApp.applicationName) {
+        //             return app;
+        //         }
+        //
+        //         return {
+        //             ...app,
+        //             windowState: {
+        //                 ...ws,
+        //                 runningWindows: ws.runningWindows.map(win => {
+        //                     if (win.hash !== action.payload.windowHash) {
+        //                         return win;
+        //                     }
+        //
+        //                     const tabIndex = win.windowTab.findIndex(
+        //                         tab => tab.hash === action.payload.tabHash
+        //                     );
+        //
+        //                     const updatedTabs = win.windowTab.filter(
+        //                         tab => tab.hash !== action.payload.tabHash
+        //                     );
+        //
+        //                     const wasActive =
+        //                         win.windowTab[tabIndex]?.isCurrentTab;
+        //
+        //                     if (wasActive && updatedTabs.length > 0) {
+        //                         const newActiveIndex = Math.max(0, tabIndex - 1);
+        //
+        //                         updatedTabs[newActiveIndex] = {
+        //                             ...updatedTabs[newActiveIndex],
+        //                             isCurrentTab: true
+        //                         };
+        //                     }
+        //
+        //                     return {
+        //                         ...win,
+        //                         windowTab: updatedTabs
+        //                     };
+        //                 })
+        //             }
+        //         };
+        //     });
+        //
+        //     return {
+        //         ...state,
+        //         runningApplication: updatedApps
+        //     };
+        // }
 
         case "SWITCH_TAB": {
-            const targetApp = state.runningApplication.find(app =>
-                app.windowState?.runningWindows.some(
-                    win => win.hash === action.payload.windowHash
-                )
-            );
+            // const targetApp = state.runningApplication.find(app =>
+            //     app.windowState?.runningWindows.some(
+            //         win => win.hash === action.payload.windowHash
+            //     )
+            // );
+            //
+            // if (!targetApp || !targetApp.windowState) return state;
+            //
+            // const ws = targetApp.windowState;
+            //
+            // const updatedApps = state.runningApplication.map(app => {
+            //     if (app.applicationName !== targetApp.applicationName) {
+            //         return app;
+            //     }
 
-            if (!targetApp || !targetApp.windowState) return state;
-
-            const ws = targetApp.windowState;
-
-            const updatedApps = state.runningApplication.map(app => {
-                if (app.applicationName !== targetApp.applicationName) {
-                    return app;
-                }
-
-                return {
-                    ...app,
-                    windowState: {
-                        ...ws,
-                        runningWindows: ws.runningWindows.map(win => {
-                            if (win.hash !== action.payload.windowHash) {
-                                return win;
-                            }
-
-                            return {
-                                ...win,
-                                windowTab: win.windowTab.map(tab => ({
-                                    ...tab,
-                                    isCurrentTab:
-                                        tab.hash === action.payload.tabHash
-                                }))
-                            };
-                        })
-                    }
-                };
-            });
+            //     return {
+            //         ...app,
+            //         windowState: {
+            //             ...ws,
+            //             runningWindows: ws.runningWindows.map(win => {
+            //                 if (win.hash !== action.payload.windowHash) {
+            //                     return win;
+            //                 }
+            //
+            //                 return {
+            //                     ...win,
+            //                     windowTab: win.windowTab.map(tab => ({
+            //                         ...tab,
+            //                         isCurrentTab:
+            //                             tab.hash === action.payload.tabHash
+            //                     }))
+            //                 };
+            //             })
+            //         }
+            //     };
+            // });
 
             return {
-                ...state,
-                runningApplication: updatedApps
+                // ...state,
+                // runningApplication: updatedApps
             };
         }
 
         case "SWITCH_WINDOW": {
-            const targetApp = state.runningApplication.find(app =>
-                app.windowState?.runningWindows.some(
-                    win => win.hash === action.payload.windowHash
-                )
+            const updatedWindowMap = moveToFront(
+                state.openAppWindow,
+                action.payload.windowID
             );
 
-            if (!targetApp) return state;
+            if (updatedWindowMap === state.openAppWindow) {
+                return state;
+            }
 
             return {
                 ...state,
-                runningApplication: buildStack(
-                    state.runningApplication,
-                    targetApp.applicationName
-                )
+                openAppWindow: updatedWindowMap,
             };
         }
 
-        case "BRING_TO_FRONT": {
-            return {
-                ...state,
-                runningApplication: buildStack(
-                    state.runningApplication,
-                    action.payload.app
-                )
-            };
-        }
+        // case "BRING_TO_FRONT": {
+        //     return {
+        //         ...state,
+        //         runningApplication: buildStack(
+        //             state.runningApplication,
+        //             action.payload.app
+        //         )
+        //     };
+        // }
 
         default:
             return state;
