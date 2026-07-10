@@ -1,70 +1,106 @@
-// // @flow
-
-
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import {
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 
-export type WindowHeaderPosition = "top" | "bottom" | "left" | "right";
-type WindowHeaderSize = "sm" | "md" | "lg" | "xl";
+export type WindowHeaderPosition =
+    | "top"
+    | "bottom"
+    | "left"
+    | "right";
 
-const headerSizeMap: Record<WindowHeaderSize, string> = {
+export type WindowHeaderSize =
+    | "sm"
+    | "md"
+    | "lg"
+    | "xl";
+
+const headerSizeMap: Record<
+    WindowHeaderSize,
+    string
+> = {
     sm: "10%",
     md: "15%",
     lg: "20%",
     xl: "30%",
 };
 
-// Single source of truth for the minimum window footprint.
-// Keeping these as named constants makes the boundary-vs-min-size
-// conflict (see clampSize below) explicit instead of "magic numbers"
-// scattered across the file.
 const MIN_WIDTH = 250;
 const MIN_HEIGHT = 160;
 
-interface AdaptiveWindowProps {
+export interface AdaptiveWindowProps {
+    /**
+     * Unique ID belonging to the WindowState.
+     */
+    windowID: string;
+
+    /**
+     * Initial position inside the desktop boundary.
+     */
     initialX: number;
     initialY: number;
+
+    /**
+     * Initial window dimensions.
+     */
     windowWidth?: number;
     windowHeight?: number;
-    hashNumber: number;
+
+    /**
+     * Determines where the window header is located.
+     */
     dock?: WindowHeaderPosition;
+
+    /**
+     * Determines how much space the header occupies.
+     */
     headerSize?: WindowHeaderSize;
+
+    /**
+     * Window header and body content.
+     */
     headerComponent: React.ReactNode | null;
     bodyComponent: React.ReactNode | null;
+
+    /**
+     * The desktop element that contains the window.
+     */
     boundaryRef: React.RefObject<HTMLDivElement | null>;
+
+    /**
+     * Called when the window is selected.
+     *
+     * The parent uses this to move the window to the
+     * front of the window stack.
+     */
+    onMouseDown?: () => void;
 }
 
-// interface Rect {
-//     x: number;
-//     y: number;
-//     width: number;
-//     height: number;
-// }
-
-/**
- * Returns the usable size of the boundary element in its own local
- * coordinate space. `clientWidth`/`clientHeight` are used (not
- * getBoundingClientRect) because:
- *   1. AdaptiveWindow is `position: absolute` inside a `position:
- *      relative` boundary, so `left`/`top` are resolved against the
- *      boundary's padding box — which is exactly what clientWidth/
- *      clientHeight measure (border-box minus borders/scrollbars).
- *   2. clientWidth/clientHeight are immune to ancestor CSS
- *      transforms (scale, translate) that would otherwise skew a
- *      getBoundingClientRect()-based measurement relative to the
- *      untransformed coordinate space the window is positioned in.
- * If DesktopWorkspace ever gains a border, switch to
- * getBoundingClientRect and subtract borderLeftWidth/borderTopWidth.
- */
-function getBoundarySize(boundary: HTMLDivElement | null) {
-    if (!boundary) return null;
-    return { width: boundary.clientWidth, height: boundary.clientHeight };
+interface Position {
+    x: number;
+    y: number;
 }
 
-/**
- * Clamp a drag (position changes, size stays fixed).
- * The window must stay fully inside [0, boundaryWidth] x [0, boundaryHeight].
- */
+interface WindowSize {
+    width: number;
+    height: number;
+}
+
+function getBoundarySize(
+    boundary: HTMLDivElement | null
+): WindowSize | null {
+    if (!boundary) {
+        return null;
+    }
+
+    return {
+        width: boundary.clientWidth,
+        height: boundary.clientHeight,
+    };
+}
+
 function clampPosition(
     nextX: number,
     nextY: number,
@@ -72,50 +108,30 @@ function clampPosition(
     height: number,
     boundaryWidth: number,
     boundaryHeight: number
-): { x: number; y: number } {
-    const x = Math.max(0, Math.min(nextX, boundaryWidth - width));
-    const y = Math.max(0, Math.min(nextY, boundaryHeight - height));
-    return { x, y };
+): Position {
+    const maximumX = Math.max(
+        0,
+        boundaryWidth - width
+    );
+
+    const maximumY = Math.max(
+        0,
+        boundaryHeight - height
+    );
+
+    return {
+        x: Math.max(
+            0,
+            Math.min(nextX, maximumX)
+        ),
+
+        y: Math.max(
+            0,
+            Math.min(nextY, maximumY)
+        ),
+    };
 }
 
-/**
- * Clamp a resize (x/y stay fixed at the anchor corner, size changes).
- *
- * THE BUG THIS FIXES:
- * The previous implementation computed
- *   Math.max(minSize, Math.min(desired, boundaryLimit))
- * i.e. "floor, then ceiling". That ordering is only correct when
- * minSize <= boundaryLimit. As soon as the window is close enough to
- * the edge that the remaining room is *less* than the minimum size
- * (boundaryLimit < minSize), the outer Math.max throws away the
- * boundary result and forces the size back up past the edge — which
- * is precisely the "window grows outside the container" bug.
- *
- * THE FIX:
- * Reverse the order to "ceiling, then floor" —
- *   Math.min(boundaryLimit, Math.max(minSize, desired))
- * — no wait, that has the same problem in the other direction if
- * applied naively. The actual fix is to make the boundary limit
- * *win* outright when the two constraints conflict, by clamping to
- * boundaryLimit LAST, unconditionally:
- *
- *   width = Math.min(boundaryLimit, Math.max(minSize, desired))
- *
- * Walk through the conflict case: boundaryLimit (available room) is
- * 80px, minSize is 250px, desired is anything.
- *   Math.max(minSize, desired) >= 250
- *   Math.min(80, thatValue) = 80   <-- boundary wins, as required
- *
- * And the normal case: boundaryLimit is 600px, minSize is 250px,
- * desired is 40px (user tried to shrink too far).
- *   Math.max(250, 40) = 250
- *   Math.min(600, 250) = 250       <-- min-size still enforced normally
- *
- * This guarantees right <= boundaryWidth and bottom <= boundaryHeight
- * at every step, even if that means the window dips below its
- * "preferred" minimum for a moment. That's the same tradeoff macOS
- * makes: the screen edge is a hard constraint, minimum size is soft.
- */
 function clampSize(
     anchorX: number,
     anchorY: number,
@@ -123,79 +139,174 @@ function clampSize(
     desiredHeight: number,
     boundaryWidth: number,
     boundaryHeight: number
-): { width: number; height: number } {
-    const maxWidth = boundaryWidth - anchorX;
-    const maxHeight = boundaryHeight - anchorY;
+): WindowSize {
+    const maximumWidth = Math.max(
+        0,
+        boundaryWidth - anchorX
+    );
 
-    const width = Math.min(maxWidth, Math.max(MIN_WIDTH, desiredWidth));
-    const height = Math.min(maxHeight, Math.max(MIN_HEIGHT, desiredHeight));
+    const maximumHeight = Math.max(
+        0,
+        boundaryHeight - anchorY
+    );
 
-    return { width, height };
+    return {
+        width: Math.min(
+            maximumWidth,
+            Math.max(MIN_WIDTH, desiredWidth)
+        ),
+
+        height: Math.min(
+            maximumHeight,
+            Math.max(MIN_HEIGHT, desiredHeight)
+        ),
+    };
 }
 
-export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
-                                                                  initialX,
-                                                                  initialY,
-                                                                  windowWidth = 500,
-                                                                  windowHeight = 300,
-                                                                  dock = "top",
-                                                                  headerSize = "md",
-                                                                  bodyComponent,
-                                                                  headerComponent,
-                                                                  boundaryRef,
-                                                              }) => {
-    const windowRef = useRef<HTMLDivElement | null>(null);
+export const AdaptiveWindow: React.FC<
+    AdaptiveWindowProps
+> = ({
+         windowID,
+         initialX,
+         initialY,
+         windowWidth = 500,
+         windowHeight = 300,
+         dock = "top",
+         headerSize = "md",
+         headerComponent,
+         bodyComponent,
+         boundaryRef,
+         onMouseDown,
+     }) => {
+    const windowRef =
+        useRef<HTMLDivElement | null>(null);
 
-    const [position, setPosition] = useState({ x: initialX, y: initialY });
-    const [size, setSize] = useState({ width: windowWidth, height: windowHeight });
+    const [position, setPosition] =
+        useState<Position>({
+            x: initialX,
+            y: initialY,
+        });
 
-    const [isDragging, setIsDragging] = useState(false);
-    const [isResizing, setIsResizing] = useState(false);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [size, setSize] =
+        useState<WindowSize>({
+            width: windowWidth,
+            height: windowHeight,
+        });
 
-    const isHorizontalHeader = dock === "top" || dock === "bottom";
-    const headerPercent = headerSizeMap[headerSize];
+    const [isDragging, setIsDragging] =
+        useState(false);
 
-    const gridStyle: React.CSSProperties = isHorizontalHeader
-        ? {
-            gridTemplateRows:
-                dock === "top"
-                    ? `${headerPercent} minmax(0, 1fr)`
-                    : `minmax(0, 1fr) ${headerPercent}`,
-        }
-        : {
-            gridTemplateColumns:
-                dock === "left"
-                    ? `${headerPercent} minmax(0, 1fr)`
-                    : `minmax(0, 1fr) ${headerPercent}`,
-        };
+    const [isResizing, setIsResizing] =
+        useState(false);
 
-    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-        e.preventDefault();
+    const [mousePosition, setMousePosition] =
+        useState<Position>({
+            x: 0,
+            y: 0,
+        });
+
+    const isHorizontalHeader =
+        dock === "top" || dock === "bottom";
+
+    const headerPercent =
+        headerSizeMap[headerSize];
+
+    const gridStyle: React.CSSProperties =
+        isHorizontalHeader
+            ? {
+                gridTemplateRows:
+                    dock === "top"
+                        ? `${headerPercent} minmax(0, 1fr)`
+                        : `minmax(0, 1fr) ${headerPercent}`,
+            }
+            : {
+                gridTemplateColumns:
+                    dock === "left"
+                        ? `${headerPercent} minmax(0, 1fr)`
+                        : `minmax(0, 1fr) ${headerPercent}`,
+            };
+
+    /**
+     * Runs when any part of the window is clicked.
+     *
+     * This calls the parent callback that moves the
+     * window to the front.
+     */
+    function handleWindowMouseDown(): void {
+        onMouseDown?.();
+    }
+
+    /**
+     * Starts dragging from the header.
+     *
+     * It does not call onMouseDown because the event
+     * bubbles to the outer window container.
+     */
+    function handleDragMouseDown(
+        event: React.MouseEvent<HTMLDivElement>
+    ): void {
+        event.preventDefault();
+
         setIsDragging(true);
-        setMousePosition({ x: e.clientX, y: e.clientY });
-    };
 
-    const handleResizeMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
+        setMousePosition({
+            x: event.clientX,
+            y: event.clientY,
+        });
+    }
+
+    /**
+     * Starts resizing from the bottom-right handle.
+     */
+    function handleResizeMouseDown(
+        event: React.MouseEvent<HTMLDivElement>
+    ): void {
+        event.preventDefault();
+
+        /*
+         * Prevent this event from also starting a drag
+         * on the header or outer container.
+         */
+        event.stopPropagation();
+
+        /*
+         * Because propagation is stopped, manually call
+         * the foreground callback once here.
+         */
+        onMouseDown?.();
+
         setIsResizing(true);
-        setMousePosition({ x: e.clientX, y: e.clientY });
-    };
+
+        setMousePosition({
+            x: event.clientX,
+            y: event.clientY,
+        });
+    }
 
     useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            const boundarySize = getBoundarySize(boundaryRef.current);
-            if (!boundarySize) return;
+        function handleMouseMove(
+            event: MouseEvent
+        ): void {
+            const boundarySize =
+                getBoundarySize(
+                    boundaryRef.current
+                );
 
-            const deltaX = e.clientX - mousePosition.x;
-            const deltaY = e.clientY - mousePosition.y;
+            if (!boundarySize) {
+                return;
+            }
+
+            const deltaX =
+                event.clientX - mousePosition.x;
+
+            const deltaY =
+                event.clientY - mousePosition.y;
 
             if (isDragging) {
-                setPosition((prev) =>
+                setPosition(previousPosition =>
                     clampPosition(
-                        prev.x + deltaX,
-                        prev.y + deltaY,
+                        previousPosition.x + deltaX,
+                        previousPosition.y + deltaY,
                         size.width,
                         size.height,
                         boundarySize.width,
@@ -205,14 +316,12 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
             }
 
             if (isResizing) {
-                // Bottom-right handle: the anchor corner (position.x, position.y)
-                // never moves during a resize — only width/height change.
-                setSize((prev) =>
+                setSize(previousSize =>
                     clampSize(
                         position.x,
                         position.y,
-                        prev.width + deltaX,
-                        prev.height + deltaY,
+                        previousSize.width + deltaX,
+                        previousSize.height + deltaY,
                         boundarySize.width,
                         boundarySize.height
                     )
@@ -220,69 +329,115 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
             }
 
             if (isDragging || isResizing) {
-                setMousePosition({ x: e.clientX, y: e.clientY });
+                setMousePosition({
+                    x: event.clientX,
+                    y: event.clientY,
+                });
             }
-        };
+        }
 
-        const handleMouseUp = () => {
+        function handleMouseUp(): void {
             setIsDragging(false);
             setIsResizing(false);
-        };
+        }
 
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", handleMouseUp);
+        window.addEventListener(
+            "mousemove",
+            handleMouseMove
+        );
+
+        window.addEventListener(
+            "mouseup",
+            handleMouseUp
+        );
 
         return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mouseup", handleMouseUp);
+            window.removeEventListener(
+                "mousemove",
+                handleMouseMove
+            );
+
+            window.removeEventListener(
+                "mouseup",
+                handleMouseUp
+            );
         };
-    }, [isDragging, isResizing, mousePosition, position, size, boundaryRef]);
+    }, [
+        isDragging,
+        isResizing,
+        mousePosition,
+        position.x,
+        position.y,
+        size.width,
+        size.height,
+        boundaryRef,
+    ]);
 
-    // Defensive re-clamp: if the boundary itself resizes (e.g. the
-    // browser window shrinks, or the Dock changes height) while this
-    // window is NOT being actively dragged/resized, snap it back
-    // inside the new bounds instead of waiting for the next
-    // drag/resize gesture to notice.
+    /**
+     * Keeps the window inside the desktop when the
+     * desktop boundary changes size.
+     */
     useEffect(() => {
-        const boundary = boundaryRef.current;
-        if (!boundary || typeof ResizeObserver === "undefined") return;
+        const boundary =
+            boundaryRef.current;
 
-        const observer = new ResizeObserver(() => {
-            const boundarySize = getBoundarySize(boundary);
-            if (!boundarySize) return;
+        if (
+            !boundary ||
+            typeof ResizeObserver === "undefined"
+        ) {
+            return;
+        }
 
-            setSize((prevSize) => {
-                const clampedSize = clampSize(
-                    position.x,
-                    position.y,
-                    prevSize.width,
-                    prevSize.height,
-                    boundarySize.width,
-                    boundarySize.height
+        const observer =
+            new ResizeObserver(() => {
+                const boundarySize =
+                    getBoundarySize(boundary);
+
+                if (!boundarySize) {
+                    return;
+                }
+
+                setSize(previousSize =>
+                    clampSize(
+                        position.x,
+                        position.y,
+                        previousSize.width,
+                        previousSize.height,
+                        boundarySize.width,
+                        boundarySize.height
+                    )
                 );
-                return clampedSize;
+
+                setPosition(previousPosition =>
+                    clampPosition(
+                        previousPosition.x,
+                        previousPosition.y,
+                        size.width,
+                        size.height,
+                        boundarySize.width,
+                        boundarySize.height
+                    )
+                );
             });
 
-            setPosition((prevPosition) =>
-                clampPosition(
-                    prevPosition.x,
-                    prevPosition.y,
-                    size.width,
-                    size.height,
-                    boundarySize.width,
-                    boundarySize.height
-                )
-            );
-        });
-
         observer.observe(boundary);
-        return () => observer.disconnect();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [boundaryRef]);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [
+        boundaryRef,
+        position.x,
+        position.y,
+        size.width,
+        size.height,
+    ]);
 
     return (
         <div
             ref={windowRef}
+            data-window-id={windowID}
+            onMouseDown={handleWindowMouseDown}
             className="
                 absolute
                 grid
@@ -305,8 +460,18 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
             }}
         >
             <div
-                className="flex w-full h-full min-w-0 min-h-0 overflow-hidden gap-0.5 select-none"
-                onMouseDown={handleMouseDown}
+                className="
+                    flex
+                    w-full
+                    h-full
+                    min-w-0
+                    min-h-0
+                    overflow-hidden
+                    gap-0.5
+                    select-none
+                    cursor-move
+                "
+                onMouseDown={handleDragMouseDown}
             >
                 {headerComponent}
             </div>
@@ -324,13 +489,23 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
                     overflow-hidden
                 "
             >
-                <div className="w-full h-full min-w-0 min-h-0 overflow-hidden">
+                <div
+                    className="
+                        w-full
+                        h-full
+                        min-w-0
+                        min-h-0
+                        overflow-hidden
+                    "
+                >
                     {bodyComponent}
                 </div>
             </div>
 
             <div
-                onMouseDown={handleResizeMouseDown}
+                onMouseDown={
+                    handleResizeMouseDown
+                }
                 className="
                     absolute
                     right-0
@@ -347,13 +522,15 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
     );
 };
 
-
-// import {useWindowContext} from "../../Context/useWindowContext.ts";
-// import {useEffect, useState} from "react";
 // import * as React from "react";
+// import { useEffect, useRef, useState } from "react";
+// import { useWindowContext } from "../../Context/useWindowContext.ts";
 //
-//
-// export type WindowHeaderPosition = "top" | "bottom" | "left" | "right";
+// export type WindowHeaderPosition =
+//     | "top"
+//     | "bottom"
+//     | "left"
+//     | "right";
 //
 // type WindowHeaderSize = "sm" | "md" | "lg" | "xl";
 //
@@ -363,6 +540,471 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
 //     lg: "20%",
 //     xl: "30%",
 // };
+//
+// const MIN_WIDTH = 250;
+// const MIN_HEIGHT = 160;
+//
+// interface AdaptiveWindowProps {
+//     windowID: string;
+//
+//     initialX: number;
+//     initialY: number;
+//
+//     windowWidth?: number;
+//     windowHeight?: number;
+//
+//     dock?: WindowHeaderPosition;
+//     headerSize?: WindowHeaderSize;
+//
+//     headerComponent: React.ReactNode | null;
+//     bodyComponent: React.ReactNode | null;
+//
+//     boundaryRef: React.RefObject<HTMLDivElement | null>;
+//
+// }
+//
+// function getBoundarySize(
+//     boundary: HTMLDivElement | null
+// ): {
+//     width: number;
+//     height: number;
+// } | null {
+//     if (!boundary) {
+//         return null;
+//     }
+//
+//     return {
+//         width: boundary.clientWidth,
+//         height: boundary.clientHeight,
+//     };
+// }
+//
+// function clampPosition(
+//     nextX: number,
+//     nextY: number,
+//     width: number,
+//     height: number,
+//     boundaryWidth: number,
+//     boundaryHeight: number
+// ): {
+//     x: number;
+//     y: number;
+// } {
+//     const maximumX = Math.max(0, boundaryWidth - width);
+//     const maximumY = Math.max(0, boundaryHeight - height);
+//
+//     const x = Math.max(
+//         0,
+//         Math.min(nextX, maximumX)
+//     );
+//
+//     const y = Math.max(
+//         0,
+//         Math.min(nextY, maximumY)
+//     );
+//
+//     return {
+//         x,
+//         y,
+//     };
+// }
+//
+// function clampSize(
+//     anchorX: number,
+//     anchorY: number,
+//     desiredWidth: number,
+//     desiredHeight: number,
+//     boundaryWidth: number,
+//     boundaryHeight: number
+// ): {
+//     width: number;
+//     height: number;
+// } {
+//     const maxWidth = Math.max(
+//         0,
+//         boundaryWidth - anchorX
+//     );
+//
+//     const maxHeight = Math.max(
+//         0,
+//         boundaryHeight - anchorY
+//     );
+//
+//     const width = Math.min(
+//         maxWidth,
+//         Math.max(MIN_WIDTH, desiredWidth)
+//     );
+//
+//     const height = Math.min(
+//         maxHeight,
+//         Math.max(MIN_HEIGHT, desiredHeight)
+//     );
+//
+//     return {
+//         width,
+//         height,
+//     };
+// }
+//
+// export const AdaptiveWindow: React.FC<
+//     AdaptiveWindowProps
+// > = ({
+//          windowID,
+//          initialX,
+//          initialY,
+//          windowWidth = 500,
+//          windowHeight = 300,
+//          dock = "top",
+//          headerSize = "md",
+//          bodyComponent,
+//          headerComponent,
+//          boundaryRef,
+//
+//      }) => {
+//     const {
+//         windowState,
+//         moveWindowToFront,
+//     } = useWindowContext();
+//
+//     const windowRef =
+//         useRef<HTMLDivElement | null>(null);
+//
+//     const currentWindow =
+//         windowState.openAppWindow.get(windowID);
+//
+//     const [position, setPosition] = useState({
+//         x: initialX,
+//         y: initialY,
+//     });
+//
+//     const [size, setSize] = useState({
+//         width: windowWidth,
+//         height: windowHeight,
+//     });
+//
+//     const [isDragging, setIsDragging] =
+//         useState(false);
+//
+//     const [isResizing, setIsResizing] =
+//         useState(false);
+//
+//     const [mousePosition, setMousePosition] =
+//         useState({
+//             x: 0,
+//             y: 0,
+//         });
+//
+//     const isHorizontalHeader =
+//         dock === "top" || dock === "bottom";
+//
+//     const headerPercent =
+//         headerSizeMap[headerSize];
+//
+//     const gridStyle: React.CSSProperties =
+//         isHorizontalHeader
+//             ? {
+//                 gridTemplateRows:
+//                     dock === "top"
+//                         ? `${headerPercent} minmax(0, 1fr)`
+//                         : `minmax(0, 1fr) ${headerPercent}`,
+//             }
+//             : {
+//                 gridTemplateColumns:
+//                     dock === "left"
+//                         ? `${headerPercent} minmax(0, 1fr)`
+//                         : `minmax(0, 1fr) ${headerPercent}`,
+//             };
+//
+//     function handleWindowMouseDown(): void {
+//         if (!currentWindow?.isActive) {
+//             moveWindowToFront(windowID);
+//         }
+//     }
+//
+//     function handleDragMouseDown(
+//         event: React.MouseEvent<HTMLDivElement>
+//     ): void {
+//         event.preventDefault();
+//
+//         moveWindowToFront(windowID);
+//
+//         setIsDragging(true);
+//
+//         setMousePosition({
+//             x: event.clientX,
+//             y: event.clientY,
+//         });
+//     }
+//
+//     function handleResizeMouseDown(
+//         event: React.MouseEvent<HTMLDivElement>
+//     ): void {
+//         event.preventDefault();
+//         event.stopPropagation();
+//
+//         moveWindowToFront(windowID);
+//
+//         setIsResizing(true);
+//
+//         setMousePosition({
+//             x: event.clientX,
+//             y: event.clientY,
+//         });
+//     }
+//
+//     useEffect(() => {
+//         function handleMouseMove(
+//             event: MouseEvent
+//         ): void {
+//             const boundarySize = getBoundarySize(
+//                 boundaryRef.current
+//             );
+//
+//             if (!boundarySize) {
+//                 return;
+//             }
+//
+//             const deltaX =
+//                 event.clientX - mousePosition.x;
+//
+//             const deltaY =
+//                 event.clientY - mousePosition.y;
+//
+//             if (isDragging) {
+//                 setPosition(previousPosition =>
+//                     clampPosition(
+//                         previousPosition.x + deltaX,
+//                         previousPosition.y + deltaY,
+//                         size.width,
+//                         size.height,
+//                         boundarySize.width,
+//                         boundarySize.height
+//                     )
+//                 );
+//             }
+//
+//             if (isResizing) {
+//                 setSize(previousSize =>
+//                     clampSize(
+//                         position.x,
+//                         position.y,
+//                         previousSize.width + deltaX,
+//                         previousSize.height + deltaY,
+//                         boundarySize.width,
+//                         boundarySize.height
+//                     )
+//                 );
+//             }
+//
+//             if (isDragging || isResizing) {
+//                 setMousePosition({
+//                     x: event.clientX,
+//                     y: event.clientY,
+//                 });
+//             }
+//         }
+//
+//         function handleMouseUp(): void {
+//             setIsDragging(false);
+//             setIsResizing(false);
+//         }
+//
+//         window.addEventListener(
+//             "mousemove",
+//             handleMouseMove
+//         );
+//
+//         window.addEventListener(
+//             "mouseup",
+//             handleMouseUp
+//         );
+//
+//         return () => {
+//             window.removeEventListener(
+//                 "mousemove",
+//                 handleMouseMove
+//             );
+//
+//             window.removeEventListener(
+//                 "mouseup",
+//                 handleMouseUp
+//             );
+//         };
+//     }, [
+//         isDragging,
+//         isResizing,
+//         mousePosition,
+//         position,
+//         size,
+//         boundaryRef,
+//     ]);
+//
+//     useEffect(() => {
+//         const boundary = boundaryRef.current;
+//
+//         if (
+//             !boundary ||
+//             typeof ResizeObserver === "undefined"
+//         ) {
+//             return;
+//         }
+//
+//         const observer = new ResizeObserver(() => {
+//             const boundarySize =
+//                 getBoundarySize(boundary);
+//
+//             if (!boundarySize) {
+//                 return;
+//             }
+//
+//             setSize(previousSize =>
+//                 clampSize(
+//                     position.x,
+//                     position.y,
+//                     previousSize.width,
+//                     previousSize.height,
+//                     boundarySize.width,
+//                     boundarySize.height
+//                 )
+//             );
+//
+//             setPosition(previousPosition =>
+//                 clampPosition(
+//                     previousPosition.x,
+//                     previousPosition.y,
+//                     size.width,
+//                     size.height,
+//                     boundarySize.width,
+//                     boundarySize.height
+//                 )
+//             );
+//         });
+//
+//         observer.observe(boundary);
+//
+//         return () => {
+//             observer.disconnect();
+//         };
+//     }, [
+//         boundaryRef,
+//         position.x,
+//         position.y,
+//         size.width,
+//         size.height,
+//     ]);
+//
+//     if (!currentWindow || currentWindow.isClosed) {
+//         return null;
+//     }
+//
+//     return (
+//         <div
+//             ref={windowRef}
+//            // onMouseDown={handleWindowMouseDown}
+//             className="
+//                 absolute
+//                 grid
+//                 box-border
+//                 bg-[#111111]
+//                 rounded-sm
+//                 shadow-md/20
+//                 overflow-hidden
+//                 min-w-0
+//                 min-h-0
+//                 max-w-full
+//                 max-h-full
+//             "
+//             style={{
+//                 left: `${position.x}px`,
+//                 top: `${position.y}px`,
+//                 width: `${size.width}px`,
+//                 height: `${size.height}px`,
+//                 ...gridStyle,
+//             }}
+//         >
+//             <div
+//                 className="
+//                     flex
+//                     w-full
+//                     h-full
+//                     min-w-0
+//                     min-h-0
+//                     overflow-hidden
+//                     gap-0.5
+//                     select-none
+//                 "
+//                 onMouseDown={handleDragMouseDown}
+//             >
+//                 {headerComponent}
+//             </div>
+//
+//             <div
+//                 className="
+//                     bg-[#373a3c]
+//                     border-t
+//                     border-t-white/60
+//                     border-t-[0.2px]
+//                     w-full
+//                     h-full
+//                     min-w-0
+//                     min-h-0
+//                     overflow-hidden
+//                 "
+//             >
+//                 <div
+//                     className="
+//                         w-full
+//                         h-full
+//                         min-w-0
+//                         min-h-0
+//                         overflow-hidden
+//                     "
+//                 >
+//                     {bodyComponent}
+//                 </div>
+//             </div>
+//
+//             <div
+//                 onMouseDown={handleResizeMouseDown}
+//                 className="
+//                     absolute
+//                     right-0
+//                     bottom-0
+//                     w-3
+//                     h-3
+//                     cursor-se-resize
+//                     bg-white/20
+//                     hover:bg-white/40
+//                     z-50
+//                 "
+//             />
+//         </div>
+//     );
+// };
+//
+
+// // // @flow
+//
+//
+// import * as React from "react";
+// import { useEffect, useRef, useState } from "react";
+//
+// export type WindowHeaderPosition = "top" | "bottom" | "left" | "right";
+// type WindowHeaderSize = "sm" | "md" | "lg" | "xl";
+//
+// const headerSizeMap: Record<WindowHeaderSize, string> = {
+//     sm: "10%",
+//     md: "15%",
+//     lg: "20%",
+//     xl: "30%",
+// };
+//
+// // Single source of truth for the minimum window footprint.
+// // Keeping these as named constants makes the boundary-vs-min-size
+// // conflict (see clampSize below) explicit instead of "magic numbers"
+// // scattered across the file.
+// const MIN_WIDTH = 250;
+// const MIN_HEIGHT = 160;
 //
 // interface AdaptiveWindowProps {
 //     initialX: number;
@@ -374,9 +1016,108 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
 //     headerSize?: WindowHeaderSize;
 //     headerComponent: React.ReactNode | null;
 //     bodyComponent: React.ReactNode | null;
-//    // children: React.ReactNode;
+//     boundaryRef: React.RefObject<HTMLDivElement | null>;
 // }
-// //array of childread no that will pass to the header
+//
+// // interface Rect {
+// //     x: number;
+// //     y: number;
+// //     width: number;
+// //     height: number;
+// // }
+//
+// /**
+//  * Returns the usable size of the boundary element in its own local
+//  * coordinate space. `clientWidth`/`clientHeight` are used (not
+//  * getBoundingClientRect) because:
+//  *   1. AdaptiveWindow is `position: absolute` inside a `position:
+//  *      relative` boundary, so `left`/`top` are resolved against the
+//  *      boundary's padding box — which is exactly what clientWidth/
+//  *      clientHeight measure (border-box minus borders/scrollbars).
+//  *   2. clientWidth/clientHeight are immune to ancestor CSS
+//  *      transforms (scale, translate) that would otherwise skew a
+//  *      getBoundingClientRect()-based measurement relative to the
+//  *      untransformed coordinate space the window is positioned in.
+//  * If DesktopWorkspace ever gains a border, switch to
+//  * getBoundingClientRect and subtract borderLeftWidth/borderTopWidth.
+//  */
+// function getBoundarySize(boundary: HTMLDivElement | null) {
+//     if (!boundary) return null;
+//     return { width: boundary.clientWidth, height: boundary.clientHeight };
+// }
+//
+// /**
+//  * Clamp a drag (position changes, size stays fixed).
+//  * The window must stay fully inside [0, boundaryWidth] x [0, boundaryHeight].
+//  */
+// function clampPosition(
+//     nextX: number,
+//     nextY: number,
+//     width: number,
+//     height: number,
+//     boundaryWidth: number,
+//     boundaryHeight: number
+// ): { x: number; y: number } {
+//     const x = Math.max(0, Math.min(nextX, boundaryWidth - width));
+//     const y = Math.max(0, Math.min(nextY, boundaryHeight - height));
+//     return { x, y };
+// }
+//
+// /**
+//  * Clamp a resize (x/y stay fixed at the anchor corner, size changes).
+//  *
+//  * THE BUG THIS FIXES:
+//  * The previous implementation computed
+//  *   Math.max(minSize, Math.min(desired, boundaryLimit))
+//  * i.e. "floor, then ceiling". That ordering is only correct when
+//  * minSize <= boundaryLimit. As soon as the window is close enough to
+//  * the edge that the remaining room is *less* than the minimum size
+//  * (boundaryLimit < minSize), the outer Math.max throws away the
+//  * boundary result and forces the size back up past the edge — which
+//  * is precisely the "window grows outside the container" bug.
+//  *
+//  * THE FIX:
+//  * Reverse the order to "ceiling, then floor" —
+//  *   Math.min(boundaryLimit, Math.max(minSize, desired))
+//  * — no wait, that has the same problem in the other direction if
+//  * applied naively. The actual fix is to make the boundary limit
+//  * *win* outright when the two constraints conflict, by clamping to
+//  * boundaryLimit LAST, unconditionally:
+//  *
+//  *   width = Math.min(boundaryLimit, Math.max(minSize, desired))
+//  *
+//  * Walk through the conflict case: boundaryLimit (available room) is
+//  * 80px, minSize is 250px, desired is anything.
+//  *   Math.max(minSize, desired) >= 250
+//  *   Math.min(80, thatValue) = 80   <-- boundary wins, as required
+//  *
+//  * And the normal case: boundaryLimit is 600px, minSize is 250px,
+//  * desired is 40px (user tried to shrink too far).
+//  *   Math.max(250, 40) = 250
+//  *   Math.min(600, 250) = 250       <-- min-size still enforced normally
+//  *
+//  * This guarantees right <= boundaryWidth and bottom <= boundaryHeight
+//  * at every step, even if that means the window dips below its
+//  * "preferred" minimum for a moment. That's the same tradeoff macOS
+//  * makes: the screen edge is a hard constraint, minimum size is soft.
+//  */
+// function clampSize(
+//     anchorX: number,
+//     anchorY: number,
+//     desiredWidth: number,
+//     desiredHeight: number,
+//     boundaryWidth: number,
+//     boundaryHeight: number
+// ): { width: number; height: number } {
+//     const maxWidth = boundaryWidth - anchorX;
+//     const maxHeight = boundaryHeight - anchorY;
+//
+//     const width = Math.min(maxWidth, Math.max(MIN_WIDTH, desiredWidth));
+//     const height = Math.min(maxHeight, Math.max(MIN_HEIGHT, desiredHeight));
+//
+//     return { width, height };
+// }
+//
 // export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
 //                                                                   initialX,
 //                                                                   initialY,
@@ -384,21 +1125,18 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
 //                                                                   windowHeight = 300,
 //                                                                   dock = "top",
 //                                                                   headerSize = "md",
-//                                                                     //hashNumber,
-//                                                                     bodyComponent,
+//                                                                   bodyComponent,
 //                                                                   headerComponent,
-//                                                                 //  headerChildren = [],
-//                                                                   //children,
+//                                                                   boundaryRef,
 //                                                               }) => {
-//     const [position, setPosition] = useState({
-//         x: initialX,
-//         y: initialY,
-//     });
+//     const windowRef = useRef<HTMLDivElement | null>(null);
+//
+//     const [position, setPosition] = useState({ x: initialX, y: initialY });
+//     const [size, setSize] = useState({ width: windowWidth, height: windowHeight });
 //
 //     const [isDragging, setIsDragging] = useState(false);
+//     const [isResizing, setIsResizing] = useState(false);
 //     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-//
-//     const { windowRef } = useWindowContext();
 //
 //     const isHorizontalHeader = dock === "top" || dock === "bottom";
 //     const headerPercent = headerSizeMap[headerSize];
@@ -407,64 +1145,73 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
 //         ? {
 //             gridTemplateRows:
 //                 dock === "top"
-//                     ? `${headerPercent} 1fr`
-//                     : `1fr ${headerPercent}`,
+//                     ? `${headerPercent} minmax(0, 1fr)`
+//                     : `minmax(0, 1fr) ${headerPercent}`,
 //         }
 //         : {
 //             gridTemplateColumns:
 //                 dock === "left"
-//                     ? `${headerPercent} 1fr`
-//                     : `1fr ${headerPercent}`,
+//                     ? `${headerPercent} minmax(0, 1fr)`
+//                     : `minmax(0, 1fr) ${headerPercent}`,
 //         };
-//
-//     // const headerDirectionClass = isHorizontalHeader
-//     //     ? "flex-row items-center"
-//     //     : "flex-col items-center";
 //
 //     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
 //         e.preventDefault();
-//
 //         setIsDragging(true);
-//         setMousePosition({
-//             x: e.clientX,
-//             y: e.clientY,
-//         });
+//         setMousePosition({ x: e.clientX, y: e.clientY });
+//     };
+//
+//     const handleResizeMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+//         e.preventDefault();
+//         e.stopPropagation();
+//         setIsResizing(true);
+//         setMousePosition({ x: e.clientX, y: e.clientY });
 //     };
 //
 //     useEffect(() => {
 //         const handleMouseMove = (e: MouseEvent) => {
-//             if (!isDragging) return;
+//             const boundarySize = getBoundarySize(boundaryRef.current);
+//             if (!boundarySize) return;
 //
 //             const deltaX = e.clientX - mousePosition.x;
 //             const deltaY = e.clientY - mousePosition.y;
 //
-//             setPosition((prev) => {
-//                 const nextX = prev.x + deltaX;
-//                 const nextY = prev.y + deltaY;
+//             if (isDragging) {
+//                 setPosition((prev) =>
+//                     clampPosition(
+//                         prev.x + deltaX,
+//                         prev.y + deltaY,
+//                         size.width,
+//                         size.height,
+//                         boundarySize.width,
+//                         boundarySize.height
+//                     )
+//                 );
+//             }
 //
-//                 const parent = windowRef.current?.parentElement;
+//             if (isResizing) {
+//                 // Bottom-right handle: the anchor corner (position.x, position.y)
+//                 // never moves during a resize — only width/height change.
+//                 setSize((prev) =>
+//                     clampSize(
+//                         position.x,
+//                         position.y,
+//                         prev.width + deltaX,
+//                         prev.height + deltaY,
+//                         boundarySize.width,
+//                         boundarySize.height
+//                     )
+//                 );
+//             }
 //
-//                 if (!parent || !windowRef.current) {
-//                     return { x: nextX, y: nextY };
-//                 }
-//
-//                 const parentRect = parent.getBoundingClientRect();
-//                 const windowRect = windowRef.current.getBoundingClientRect();
-//
-//                 return {
-//                     x: Math.max(0, Math.min(nextX, parentRect.width - windowRect.width)),
-//                     y: Math.max(0, Math.min(nextY, parentRect.height - windowRect.height)),
-//                 };
-//             });
-//
-//             setMousePosition({
-//                 x: e.clientX,
-//                 y: e.clientY,
-//             });
+//             if (isDragging || isResizing) {
+//                 setMousePosition({ x: e.clientX, y: e.clientY });
+//             }
 //         };
 //
 //         const handleMouseUp = () => {
 //             setIsDragging(false);
+//             setIsResizing(false);
 //         };
 //
 //         window.addEventListener("mousemove", handleMouseMove);
@@ -474,82 +1221,113 @@ export const AdaptiveWindow: React.FC<AdaptiveWindowProps> = ({
 //             window.removeEventListener("mousemove", handleMouseMove);
 //             window.removeEventListener("mouseup", handleMouseUp);
 //         };
-//     }, [isDragging, mousePosition, windowRef]);
+//     }, [isDragging, isResizing, mousePosition, position, size, boundaryRef]);
 //
-//     // const header = (
-//     //     <div
-//     //         onMouseDown={handleMouseDown}
-//     //         className={`
-//     //     flex
-//     //     ${headerDirectionClass}
-//     //     gap-1
-//     //     bg-[#111111]
-//     //     overflow-hidden
-//     //     select-none
-//     //     p-1
-//     //   `}
-//     //     >
-//     //         {headerChildren.map((component, index) => (
-//     //             <React.Fragment key={index}>{component}</React.Fragment>
-//     //         ))}
-//     //     </div>
-//     // );
-//     //
-//     // const content = (
-//     //     <div
-//     //         className="
-//     //     bg-[#373a3c]
-//     //     overflow-auto
-//     //     min-w-0
-//     //     min-h-0
-//     //   "
-//     //     >
-//     //         {children}
-//     //     </div>
-//     // );
+//     // Defensive re-clamp: if the boundary itself resizes (e.g. the
+//     // browser window shrinks, or the Dock changes height) while this
+//     // window is NOT being actively dragged/resized, snap it back
+//     // inside the new bounds instead of waiting for the next
+//     // drag/resize gesture to notice.
+//     useEffect(() => {
+//         const boundary = boundaryRef.current;
+//         if (!boundary || typeof ResizeObserver === "undefined") return;
+//
+//         const observer = new ResizeObserver(() => {
+//             const boundarySize = getBoundarySize(boundary);
+//             if (!boundarySize) return;
+//
+//             setSize((prevSize) => {
+//                 const clampedSize = clampSize(
+//                     position.x,
+//                     position.y,
+//                     prevSize.width,
+//                     prevSize.height,
+//                     boundarySize.width,
+//                     boundarySize.height
+//                 );
+//                 return clampedSize;
+//             });
+//
+//             setPosition((prevPosition) =>
+//                 clampPosition(
+//                     prevPosition.x,
+//                     prevPosition.y,
+//                     size.width,
+//                     size.height,
+//                     boundarySize.width,
+//                     boundarySize.height
+//                 )
+//             );
+//         });
+//
+//         observer.observe(boundary);
+//         return () => observer.disconnect();
+//         // eslint-disable-next-line react-hooks/exhaustive-deps
+//     }, [boundaryRef]);
 //
 //     return (
 //         <div
 //             ref={windowRef}
-//             className={`
-//             absolute
-//             grid
-//             bg-[#111111]
-//             rounded-sm
-//             shadow-md/20
-//             overflow-hidden
-//             resize
-//             `}
+//             className="
+//                 absolute
+//                 grid
+//                 box-border
+//                 bg-[#111111]
+//                 rounded-sm
+//                 shadow-md/20
+//                 overflow-hidden
+//                 min-w-0
+//                 min-h-0
+//                 max-w-full
+//                 max-h-full
+//             "
 //             style={{
 //                 left: `${position.x}px`,
 //                 top: `${position.y}px`,
-//                 width: `${windowWidth}px`,
-//                 height: `${windowHeight}px`,
+//                 width: `${size.width}px`,
+//                 height: `${size.height}px`,
 //                 ...gridStyle,
 //             }}
-//
 //         >
-//             {dock === "top" || dock === "left" ? (
-//                 <>
-//                     <div className=" flex  w-full h-full gap-0.5 " onMouseDown={handleMouseDown}>
-//                         {headerComponent}
-//                     </div>
-//                     <div className="bg-[#373a3c] border-t border-t-white/60 border-t-[0.2px] ">
-//                         {bodyComponent}
+//             <div
+//                 className="flex w-full h-full min-w-0 min-h-0 overflow-hidden gap-0.5 select-none"
+//                 onMouseDown={handleMouseDown}
+//             >
+//                 {headerComponent}
+//             </div>
 //
-//                     </div>
-//                 </>
+//             <div
+//                 className="
+//                     bg-[#373a3c]
+//                     border-t
+//                     border-t-white/60
+//                     border-t-[0.2px]
+//                     w-full
+//                     h-full
+//                     min-w-0
+//                     min-h-0
+//                     overflow-hidden
+//                 "
+//             >
+//                 <div className="w-full h-full min-w-0 min-h-0 overflow-hidden">
+//                     {bodyComponent}
+//                 </div>
+//             </div>
 //
-//             ) : (
-//                 <>
-//                     <div className=" flex  w-full h-full gap-0.5" onMouseDown={handleMouseDown}>
-//                         {headerComponent}
-//                     </div>
-//                     <div className=" border-t border-t-white/60 border-t-[0.2px] window-innerbody-color">
-//                         {bodyComponent}
-//                     </div>
-//                 </>
-//             )}
+//             <div
+//                 onMouseDown={handleResizeMouseDown}
+//                 className="
+//                     absolute
+//                     right-0
+//                     bottom-0
+//                     w-3
+//                     h-3
+//                     cursor-se-resize
+//                     bg-white/20
+//                     hover:bg-white/40
+//                     z-50
+//                 "
+//             />
 //         </div>
 //     );
 // };
