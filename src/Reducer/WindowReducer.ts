@@ -1,6 +1,6 @@
 import {X, Minus, Expand, Plus} from "lucide-react";
 import type {
-    ApplicationInfo, ChromePage, RunningTab, TabControl,
+    ApplicationInfo, RunningTab,
     WindowAction,
     WindowState
 } from "../Interfaces/WindowIteface.ts";
