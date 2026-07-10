@@ -9,8 +9,8 @@ import {
 import { WindowContext } from "./WindowContext.ts";
 
 import type {
-    ChromePage,
-    SystemApplication,
+    ChromePage, SystemApplication,
+
     WindowState,
 } from "../Interfaces/WindowIteface.ts";
 
@@ -167,15 +167,33 @@ export const WindowControlContextProvider: React.FC<
         });
     }
 
-    function systemApplications(): SystemApplication[] {
-        return windowState.runningApplication.map(app => ({
-            applicationName: app.applicationName,
-            iconUrl: app.iconUrl ?? "",
-            //minWidth: app.minWindowWidth,
-            //minHeight: app.minWindowHeight,
-        }));
+    function systemApplication(
+        applicationName: string,
+        iconUrl: string,
+        minWidth: number,
+        minHeight: number
+    ): SystemApplication {
+        return {
+            applicationName,
+            iconUrl,
+            minWidth,
+            minHeight,
+        };
     }
 
+    function systemApplications(): SystemApplication[] {
+        return windowState.runningApplication
+            .filter((app) => app.applicationName !== "Preview")
+            .map((app) =>
+                systemApplication(
+                    app.applicationName,
+                    app.iconUrl,
+                    app.minWindowWidth,
+                    app.minWindowHeight
+
+                )
+            );
+    }
     return (
         <WindowContext.Provider
             value={{
@@ -187,7 +205,7 @@ export const WindowControlContextProvider: React.FC<
                 closeWindow,
                 moveWindowToFront,
                 canCreateWindow,
-                systemApplications,
+               systemApplications,
                 openNewTab,
                 deleteTab,
                 switchTab,
