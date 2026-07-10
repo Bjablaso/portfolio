@@ -59,7 +59,8 @@ export const ApplicationSubManu: React.FC<ApplicationSubManuProps> = ({
 
     return (
         <>
-            <div className="relative flex flex-row gap-1 text-[0.4rem] font-light items-center">
+            <div className="relative flex flex-row gap-1 text-[0.4rem] font-light items-center"
+            >
                 {subItem.map((appManuItem, index) => (
                     <div
                         key={`${appManuItem.itemName}-${index}`}
@@ -94,6 +95,7 @@ export const ApplicationSubManu: React.FC<ApplicationSubManuProps> = ({
                     anchorRect={anchorRect}
                     onMouseEnter={cancelClose}
                     onMouseLeave={scheduleClose}
+                    parentItemName={activeItem.itemName}
                 />
             )}
         </>
