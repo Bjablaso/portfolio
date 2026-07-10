@@ -16,15 +16,15 @@ export interface ApplicationInfo{
 
 export interface ComputerApplication{
     applicationName: string;
-    iconUrl?: string ;
+    iconUrl: string ;
     type: "text" | "icon";
     isActive: boolean;
     isManu: boolean;
     applicationManu: SubItem[];
    chromePage?: ChromePage;
     maxWindow: number;
-    minWindowWidth?: number;
-    minWindowHeight?: number;
+    minWindowWidth: number;
+    minWindowHeight: number;
 }
 //////////////////
 
@@ -112,7 +112,7 @@ export interface WindowContextType {
         appName: string
     ) => boolean;
 
-    systemApplications: () => SystemApplication[];
+   systemApplications: () => SystemApplication[];
 }
 export interface WindowControlItem {
     id: number;
@@ -230,8 +230,8 @@ export type WindowAction =
 export interface SystemApplication {
     applicationName: string;
     iconUrl: string;
-    //minWidth: number;
-   // minHeight: number;
+    minWidth: number;
+    minHeight: number;
 }
 
 export type ChromePage = "google" | "portfolio" | null;

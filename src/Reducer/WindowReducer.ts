@@ -15,59 +15,6 @@ import {
     updateActiveWindow
 } from "./Stack.tsx";
 
-
-// export interface ComputerApplication{
-//     applicationName: string;
-//     iconUrl: string ;
-//     type: "text" | "icon";
-//     isActive: boolean;
-//     isManu: boolean;
-//     applicationManu: SubItem[];
-//     manuIcon: ManuBarIcon[]
-//     minWindowWidth: number;
-//     minWindowHeight: number;
-//     chromePage?: ChromePage;
-//     maxWindow: number;
-//
-// }
-
-// export interface SubItem {
-//     itemName: string;
-//     type: "text" | "icon";   // restrict to known values
-//     isActive: boolean;
-//     isSubManu: boolean;
-//     dropManuPosition?: number;
-//     subItemList?: string[];  // recursive nesting
-//     dopItemList?: dropManuItems[];      // maybe remove to add more future inheritance
-// }
-
-// windowState: {
-//     windowControl: [
-//         {
-//             id: 1,
-//             description: "exit",
-//             icon: X,
-//             color: "#ff5f57" // macOS red
-//         },
-//         {
-//             id: 2,
-//             description: "minimize",
-//             icon: Minus,
-//             color: "#febc2e" // macOS yellow
-//         },
-//         {
-//             id: 0,
-//             description: "expand",
-//             icon: Expand,
-//             color: "#28c840" // macOS green
-//         }
-//     ],
-//     tabControl: {
-//         iconAdd: Plus,
-//         iconMinus: X,
-//         active: false
-//     },
-
 export const initialWindowStructure: ApplicationInfo = {
     icon: FaApple,
 
@@ -146,8 +93,9 @@ export const initialWindowStructure: ApplicationInfo = {
                 },
             ],
             maxWindow: 5,
-            // minWindowWidth: 0,
-            // minWindowHeight: 0
+            minWindowWidth: 0,
+            minWindowHeight: 0,
+            iconUrl: ""
         },
 
         {
@@ -168,7 +116,7 @@ export const initialWindowStructure: ApplicationInfo = {
                 {
                     itemName: "File",
                     type: "text",
-                    isActive: false,
+                    isActive: true,
                     isSubManu: true,
                     dropManuPosition: 60,
                     dopItemList: [
@@ -259,7 +207,7 @@ export const initialWindowStructure: ApplicationInfo = {
             applicationName: "Finder",
             iconUrl: "/assets/finder-svgrepo-com.svg",
             type: "text",
-            isActive: false,
+            isActive: true,
             isManu: true,
 
             applicationManu: [
@@ -271,8 +219,8 @@ export const initialWindowStructure: ApplicationInfo = {
                     dropManuPosition: 60,
                     dopItemList: [
                         {description: "New Finder Window"},
-                        {description: "New Tab"},
-                        {description: "Open"},
+                       // {description: "New Tab"},
+                      //  {description: "Open"},
                         {description: "Close Window"},
                         {description: "Find"},
                     ],
@@ -346,9 +294,9 @@ export const initialWindowStructure: ApplicationInfo = {
                     ],
                 },
             ],
-            maxWindow: 1,
-            minWindowWidth: 200,
-            minWindowHeight: 160
+            maxWindow: 5,
+            minWindowWidth: 160,
+            minWindowHeight: 120
         },
     ],
 
